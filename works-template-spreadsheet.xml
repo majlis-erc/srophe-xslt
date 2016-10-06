@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="works-spreadsheet2tei.xsl"?>
+<root>
+    <row>
+        <New_URI>*** REQUIRED. Contains the new Syriaca.org URI to be assigned to each row.</New_URI>
+        <title_syriaca-headword.en>REQUIRED. (text) The display name used in Syriaca page titles, etc. Each row must have at least 1 cell with a "title syriaca-headword" value, in English ("en"), transliteration (e.g., "en-x-gedsh"), or Syriac ("syr"). This can have a source but doesn't have to. (See http://syriaca.org/exist/apps/srophe/documentation/headwords.html)</title_syriaca-headword.en>
+        <title_syriaca-headword.syr>REQUIRED. (text) The display name used in Syriaca page titles, etc. Each row must have at least 1 cell with a "title syriaca-headword" value, in English ("en"), transliteration (e.g., "en-x-gedsh"), or Syriac ("syr"). This can have a source but doesn't have to. (See http://syriaca.org/exist/apps/srophe/documentation/headwords.html)</title_syriaca-headword.syr>
+        <title.Source_1.en>OPTIONAL. (text) The title in English, according to Source 1.</title.Source_1.en>
+        <author_ref.Source_1>RECOMMENDED. (URI) The full Syriaca.org URI of the work author, according to Source 1. If there is more than 1 author from Source 1, duplicate this column.</author_ref.Source_1>
+        <author_role.Source_1>OPTIONAL. (URI) The URI corresponding to the author's role according to Source 1, selected from http://syriaca.org/documentation/author-editor-roles.xml, ONLY if that role is disputed or if you want to specify something different from regular "author". If there is more than 1 author from Source 1, duplicate this column.</author_role.Source_1>
+        <editor_ref.Source_1>OPTIONAL. (URI) The full Syriaca.org URI of the work's editor (including translators, scribes, etc.), according to Source 1. If there is more than 1 editor from Source 1, duplicate this column.</editor_ref.Source_1>
+        <editor_role.Source_1>OPTIONAL. (URI) The URI corresponding to the editor's role according to Source 1, selected from http://syriaca.org/documentation/author-editor-roles.xml, ONLY if that role is disputed or if you want to specify something different from regular "editor". If there is more than 1 editor from Source 1, duplicate this column.</editor_role.Source_1>
+        <note_incipit.Source_1.syr>HIGHLY RECOMMENDED. (text) The work's incipit, in Syriac, according to Source 1.</note_incipit.Source_1.syr>
+        <note_incipit.Source_1.en>HIGHLY RECOMMENDED. (text) The work's incipit, in English, according to Source 1.</note_incipit.Source_1.en>
+        <note_explicit.Source_1.syr>OPTIONAL. (text) The work's explicit, in Syriac, according to Source 1.</note_explicit.Source_1.syr>
+        <note_explicit.Source_1.en>HIGHLY RECOMMENDED. (text) The work's explicit, in English, according to Source 1.</note_explicit.Source_1.en>
+        <date.Source_1.en>OPTIONAL. (a human readable date, e.g., "November 405" or "mid-4th cent.") The date of the work's composition. If Google Sheets is wrongly converting your dates automatically, select this column and format the cells as "plain text."</date.Source_1.en>
+        <date_when.Source_1>REQUIRED IF the human-readable "date" column has a precise date. (YYYY-MM-DD or YYYY-MM or YYYY) See "Machine-readable dates" in the Spreadsheet Rules tab. For approximate dates, use the notBefore and notAfter columns instead. Cells must be formatted as plain text.</date_when.Source_1>
+        <date_notBefore.Source_1>REQUIRED IF the human-readable "date" column has a date range. (YYYY-MM-DD or YYYY-MM or YYYY). See "Machine-readable dates" in the Spreadsheet Rules tab. Use this column to specify the beinning of a specific date range, a terminus post quem (e.g., "after ..."), or the outer limit of an approximate date range. See http://syriaca.org/exist/apps/srophe/documentation/dates.html for more details about approximate dates. Cells must be formatted as "plain text."</date_notBefore.Source_1>
+        <date_notAfter.Source_1>REQUIRED IF the human-readable "date" column has a date range. (YYYY-MM-DD or YYYY-MM or YYYY). See "Machine-readable dates" in the Spreadsheet Rules tab. Use this column to specify the end of a specific date range, a terminus ante quem (e.g., "before ..."), or the outer limit of an approximate date range. See http://syriaca.org/exist/apps/srophe/documentation/dates.html for more details about approximate dates.  Cells must be formatted as "plain text."</date_notAfter.Source_1>
+        <Source_1>REQUIRED IF any columns use this source. (Syriaca.org bibl number) The number (only) of the bibl record for this source. The converter adds "http://syriaca.org/bibl" automatically. For example, Select Letters of Severus 1.2 is "667".</Source_1>
+        <citedRange_pp.Source_1>REQUIRED IF any columns use Source 1. (e.g., page or section number) Whatever comes after "citedRange_" in the column name and before the dot (.) is put into the @unit attribute (e.g., "pp", "section", or "entry"). Accepts a URL linking to this location (as @target) inside square brackets. E.g., "21 [http://archive.org/...]" If there is no citedRange for a source, the source is not processed. Enter "none" if the source should be processed anyway.</citedRange_pp.Source_1>
+        <title.Source_2.syr>OPTIONAL. (text) The title in Syriac, according to Source 2.</title.Source_2.syr>
+        <Source_2>REQUIRED IF any columns use this source. (Syriaca.org bibl number) The number (only) of the bibl record for this source. The converter adds "http://syriaca.org/bibl" automatically. For example, Select Letters of Severus 1.2 is "667".</Source_2>
+        <citedRange_pp.Source_2>REQUIRED IF any columns use Source 2. (e.g., page or section number) Whatever comes after "citedRange_" in the column name and before the dot (.) is put into the @unit attribute (e.g., "pp", "section", or "entry"). Accepts a URL linking to this location (as @target) inside square brackets. E.g., "21 [http://archive.org/...]" If there is no citedRange for a source, the source is not processed. Enter "none" if the source should be processed anyway.</citedRange_pp.Source_2>
+        <bibl_ana>RECOMMENDED (URI) Subject or genre tag from the list at http://syriaca.org/documentation/work-subject-classifications.xml. (e.g., http://syriaca.org/documentation/work-subject-classifications.xml#history-universal)</bibl_ana>
+        <extent.en>RECOMMENDED (text) Prose description of number of parts, sections, stanzas, etc.</extent.en>
+        <note_abstract.en>HIGHLY RECOMMENDED. (text) A brief description that helps identify the work and distinguish it from other works that may be confused. Currently only &lt;note>s with @type="abstract" are supported in the conversion.</note_abstract.en>
+        <relation_dct---isPartOf>OPTIONAL. (Syriaca.org URI) The URI of a Syriaca.org work which contains this work. Separate multiple URIs with commas. (If the URI contains commas [unlikely], replace them with "%2c".) The conversion automatically uses the value of the column name after "relation_" as the @ref of the &lt;relation>, but currently only "possibly-identical" is defined in the column-mapping template. Triple-hyphens (---) in the @ref values are converted to colons (:) to allow prefixed namespaces.</relation_dct---isPartOf>
+        <relation_syriaca---isPartOfTradition>OPTIONAL. (Syriaca.org URI) The URI of a Syriaca.org literary tradition which contains this work (e.g., "Alexandra (text)" is part of "Alexandra (literary tradition)" http://syriaca.org/work/2057). Separate multiple URIs with commas. (If the URI contains commas [unlikely], replace them with "%2c".) The conversion automatically uses the value of the column name after "relation_" as the @ref of the &lt;relation>, but currently only "possibly-identical" is defined in the column-mapping template. Triple-hyphens (---) in the @ref values are converted to colons (:) to allow prefixed namespaces.</relation_syriaca---isPartOfTradition>
+        <relation_syriaca---commemorated>OPTIONAL. (Syriaca.org URI) The URI of a Syriaca.org person commemorated in this work. Separate multiple URIs with commas. (If the URI contains commas [unlikely], replace them with "%2c".) The conversion automatically uses the value of the column name after "relation_" as the @ref of the &lt;relation>, but currently only "possibly-identical" is defined in the column-mapping template. Triple-hyphens (---) in the @ref values are converted to colons (:) to allow prefixed namespaces.</relation_syriaca---commemorated>
+        <relation_possibly-identical>OPTIONAL. (Syriaca.org URI) The URI of other Syriaca.org entities with which the work on this row has a relationship. This must be a full URL (including "http://...") if the entity is not a work. If there is more than one URI related to this work, you can separate the URIs with commas. (If the URI contains commas [unlikely], replace them with "%2c".) The conversion automatically uses the value of the column name after "relation_" as the @ref of the &lt;relation>, but currently only "possibly-identical" is defined in the column-mapping template. Triple-hyphens (---) in the @ref values are converted to colons (:) to allow prefixed namespaces.</relation_possibly-identical>
+        <idno_URI>OPTIONAL. (e.g., a URI) An additional identifier for the work (such as a Pinakes, Wikipedia, or VIAF.org URI). The part of the column name after "idno_" automatically becomes the @type value for the &lt;idno>.</idno_URI>
+        <Edition_1></Edition_1>
+        <citedRange_pp.Edition_1></citedRange_pp.Edition_1>
+        <Translation_1></Translation_1>
+        <citedRange_pp.Translation_1></citedRange_pp.Translation_1>
+        <lang.Translation_1></lang.Translation_1>
+        <Version_1></Version_1>
+        <citedRange_pp.Version_1></citedRange_pp.Version_1>
+        <lang.Version_1></lang.Version_1>
+    </row>
+    <row>
+        <New_URI>9999</New_URI>
+        <title_syriaca-headword.en>Chronography, Part 1 (Chronicon Syriacum)</title_syriaca-headword.en>
+        <title_syriaca-headword.syr>ܦܠܓܘܬܐ ܩܕܡܝܬܐ ܕܟܪܘܢܘܓܪܦܝܐ</title_syriaca-headword.syr>
+        <title.Source_1.en>History of the World</title.Source_1.en>
+        <author_ref.Source_1>http://syriaca.org/person/239</author_ref.Source_1>
+        <author_role.Source_1>http://syriaca.org/documentation/author-editor-roles.xml#claimed</author_role.Source_1>
+        <editor_ref.Source_1></editor_ref.Source_1>
+        <editor_role.Source_1></editor_role.Source_1>
+        <note_incipit.Source_1.syr>ܩܕܡܝܬ ܥܘܬܕܐ ܠܣܘܥܪ̈ܢܐ ܡܿܢ ܥܠܡܢ̈ܝܐ ܡܢ ܡܟܬܒ̈ܢܘܬܐ ܦܬܝܼܟ̈ـܐ ܘܡܫ̈ܠܡܢܘܬܐ ܣܒ̈ܝـ[ـܢـ]ـܬܐ ܟܕ ܐܝܟ ܕܐܬܡܿܨܝܬ ܥܕܡܐ ܠܝܘܡ̈ܬܝ ܝܿܒܠܬ.</note_incipit.Source_1.syr>
+        <note_incipit.Source_1.en>Here is a test English incipit.</note_incipit.Source_1.en>
+        <note_explicit.Source_1.syr></note_explicit.Source_1.syr>
+        <note_explicit.Source_1.en></note_explicit.Source_1.en>
+        <date.Source_1.en>13th century</date.Source_1.en>
+        <date_when.Source_1></date_when.Source_1>
+        <date_notBefore.Source_1>1150</date_notBefore.Source_1>
+        <date_notAfter.Source_1>1350</date_notAfter.Source_1>
+        <Source_1>639</Source_1>
+        <citedRange_pp.Source_1>278-279</citedRange_pp.Source_1>
+        <title.Source_2.syr></title.Source_2.syr>
+        <Source_2></Source_2>
+        <citedRange_pp.Source_2></citedRange_pp.Source_2>
+        <bibl_ana>http://syriaca.org/documentation/work-subject-classifications.xml#history-universal</bibl_ana>
+        <extent.en></extent.en>
+        <note_abstract.en>The first part of Bar Hebraeus' Chronicle; an account of secular history from the time of Adam until Bar Hebraeus' own time (the 13th century). Through the 12th century, it is largely an abridgement of Michael the Syrian's Chronicle.</note_abstract.en>
+        <relation_dct---isPartOf>http://syriaca.org/work/2500</relation_dct---isPartOf>
+        <relation_syriaca---isPartOfTradition></relation_syriaca---isPartOfTradition>
+        <relation_syriaca---commemorated></relation_syriaca---commemorated>
+        <relation_possibly-identical></relation_possibly-identical>
+        <idno_URI>http://viaf.org/viaf/99999999999</idno_URI>
+        <Edition_1>2280</Edition_1>
+        <citedRange_pp.Edition_1>100-150</citedRange_pp.Edition_1>
+        <Translation_1>2282</Translation_1>
+        <citedRange_pp.Translation_1>1-50</citedRange_pp.Translation_1>
+        <lang.Translation_1>lat</lang.Translation_1>
+        <Version_1>2283</Version_1>
+        <citedRange_pp.Version_1>2-83</citedRange_pp.Version_1>
+        <lang.Version_1>lat</lang.Version_1>
+    </row>
+</root>
