@@ -66,6 +66,7 @@
                     <xsl:when test="matches(name(),'^editor_ref')">editor</xsl:when>
                     <xsl:when test="matches(name(),'^date\.')">date</xsl:when>
                     <xsl:when test="matches(name(),'^citedRange[\._]')">citedRange</xsl:when>
+                    <xsl:when test="matches(name(),'^lang[\._]')">lang</xsl:when>
                     <xsl:when test="matches(name(),'^idno[\._]')">idno</xsl:when>
                     <xsl:when test="matches(name(),'^relation[\._]')">relation</xsl:when>
                     <xsl:when test="matches(name(),'^note[\._]')">note</xsl:when>
@@ -1155,7 +1156,7 @@
         <!-- the contents of the spreadsheet row being processed -->
         <xsl:param name="this-row"/>
         <!-- creates a sequence of the column names of all the source columns used in the spreadsheet. -->
-        <xsl:variable name="sources" select="distinct-values($column-mapping//@sourceUriColumn)"/>
+        <xsl:variable name="sources" select="distinct-values($column-mapping//@sourceUriColumn[.=$this-row[.!='']/name()])"/>
         <!-- creates a bibl for each of the source columns used in the spreadsheet. -->
         <xsl:variable name="sources-sorted">
             <xsl:for-each select="$sources">
@@ -1164,28 +1165,35 @@
             </xsl:for-each>
         </xsl:variable>
         <xsl:variable name="sources-sorted-tokenized" select="tokenize($sources-sorted,' ')"/>
+        <xsl:variable name="all-source-columns" select="$this-row[$sources-sorted-tokenized=name()]"/>
         <xsl:for-each select="$sources-sorted-tokenized">
             <xsl:variable name="source-uri-column" select="."/>
             <xsl:variable name="has-cited-range" select="$this-row[position()=$column-mapping/citedRange[@sourceUriColumn=$source-uri-column]/@column]!=''"/>
-            <!-- cycles through each of the columns in $this-row, checking whether it matches the source column being processed -->
-            <xsl:for-each select="$this-row[name()=$source-uri-column and $has-cited-range]">
+            
+            <!-- source column -->
+            <xsl:variable name="source-column" select="$this-row[name()=$source-uri-column]"/>
+            <!-- or, alternatively, source column if it has content in the cited range -->
+            <!--<xsl:variable name="source-column" select="$this-row[name()=$source-uri-column and $has-cited-range]">-->
+            <xsl:for-each select="$source-column">
                 <xsl:variable name="this-column-position" select="position()"/>
                 <xsl:if test=".!=''">
                     <xsl:variable name="this-column" select="name()"/>
-                    <!-- checks whether the name of this column matches the name of the source column (boolean) -->
-                    <!--<xsl:variable name="is-matching-source-column"
-                        select="name()=$source-uri-column"/>-->
                     <!-- gets the citedRange from $column-mapping that names this column as its @sourceUriColumn -->
                     <xsl:variable name="cited-ranges"
                         select="$column-mapping/citedRange[@sourceUriColumn=$this-column]"/>
-                    <!-- checks whether there is cited range data for this source column (boolean) -->
-                    <!--<xsl:variable name="has-cited-ranges"
-                        select="$this-row[name()=$cited-ranges/@column or position()=$cited-ranges/@column]!=''"/>-->
-                    <!-- produces bibl only if this is the matching source column and has data in corresponding cited range columns -->
-<!--                    <xsl:if test="$is-matching-source-column and $has-cited-ranges">-->
+                    <!-- gets the lang from $column-mapping that names this column as its @sourceUriColumn -->
+                    <xsl:variable name="langs"
+                        select="$column-mapping/lang[@sourceUriColumn=$this-column]"/>
+                        <!-- checks whether source is a manuscript or regular bibliographic item -->
+                        <xsl:variable name="bibl-or-ms">
+                            <xsl:choose>
+                                <xsl:when test="matches(name(),'Ms_')">manuscript</xsl:when>
+                                <xsl:otherwise>bibl</xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:variable>
+                        <xsl:variable name="server-address" select="'http://wwwb.library.vanderbilt.edu/'"/>
                         <!-- creates the path to the bibl TEI using the URI number from the cell being processed -->
-                        <xsl:variable name="bibl-url"
-                            select="concat('http://wwwb.library.vanderbilt.edu/bibl/',.,'/tei')"/>
+                        <xsl:variable name="bibl-url" select="concat($server-address,$bibl-or-ms,'/',.,'/tei')"/>
 
                         <!-- BIBL ELEMENT -->
                         <bibl>
@@ -1198,6 +1206,7 @@
                                 <xsl:when test="matches(name(),'Translation_')"><xsl:attribute name="type" select="'lawd:Translation'"/></xsl:when>
                                 <xsl:when test="matches(name(),'Version_')"><xsl:attribute name="type" select="'lawd:Translation'"/></xsl:when>
                                 <xsl:when test="matches(name(),'Source_')"><xsl:attribute name="type" select="'lawd:Citation'"/></xsl:when>
+                                <xsl:when test="matches(name(),'Ms_')"><xsl:attribute name="type" select="'lawd:WrittenWork'"/></xsl:when>
                             </xsl:choose>  
                             <!-- grabs the title of the remote bibl record and imports it here. -->
                             <!-- ??? What info do we want to include here - just the title or more? The title of the TEI doc or the title of the described bibl? -->
@@ -1205,7 +1214,7 @@
                                 select="document($bibl-url)/TEI/teiHeader/fileDesc/titleStmt/title"
                                 xpath-default-namespace="http://www.tei-c.org/ns/1.0"/>
                             <!-- adds a pointer with this bibl's URI -->
-                            <ptr target="{concat('http://syriaca.org/bibl/',.)}"/>
+                            <ptr target="{concat('http://syriaca.org/',$bibl-or-ms,'/',.)}"/>
                             <!-- cycles through citedRange(s) and adds to bibl. This accepts multiple citedRanges for the same bibl (e.g., both page and section numbers), 
                                 if they exist. -->
                             <xsl:for-each select="$cited-ranges">
@@ -1230,9 +1239,32 @@
                                         <xsl:value-of select="normalize-space($this-cited-range-non-URL)"/>
                                     </xsl:element>
                                 </xsl:if>
+                                <xsl:if test="matches($bibl-url,'#') and not(string-length($this-cited-range-content))">
+                                    <xsl:variable name="msItem-id" select="replace($bibl-url,'^.*#','')"/>
+                                    <xsl:variable name="locus">
+                                        <xsl:copy-of
+                                            select="document($bibl-url)/TEI//msItem[@xml:id=$msItem-id]/locus"
+                                            xpath-default-namespace="http://www.tei-c.org/ns/1.0"/>
+                                    </xsl:variable>
+                                    <xsl:if test="$locus">
+                                        <xsl:element name="citedRange">
+                                            <xsl:attribute name="unit" select="'folio'"/>
+                                            <xsl:attribute name="from" select="$locus/locus/@from"/>
+                                            <xsl:attribute name="to" select="$locus/locus/@to"/>
+                                            <xsl:value-of select="$locus"/>
+                                        </xsl:element>
+                                    </xsl:if>
+                                </xsl:if>
+                            </xsl:for-each>
+                            <!-- adds the lang when present -->
+                            <xsl:for-each select="$langs">
+                                <xsl:variable name="this-lang" select="."/>
+                                <xsl:variable name="this-lang-content" select="$this-row[name()=$this-lang/@column or position()=$this-lang/@column]"/>
+                                <xsl:element name="lang">
+                                    <xsl:value-of select="$this-lang-content"/>
+                                </xsl:element>
                             </xsl:for-each>
                         </bibl>
-                    <!--</xsl:if>-->
                 </xsl:if>
             </xsl:for-each>
         </xsl:for-each>

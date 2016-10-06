@@ -182,10 +182,10 @@
                ana="http://syriaca.org/documentation/work-subject-classifications.xml#history-universal">
             <title xml:id="name9999-1" xml:lang="en" syriaca-tags="#syriaca-headword">Chronography, Part 1 (Chronicon Syriacum)</title>
             <title xml:id="name9999-2" xml:lang="syr" syriaca-tags="#syriaca-headword">ܦܠܓܘܬܐ ܩܕܡܝܬܐ ܕܟܪܘܢܘܓܪܦܝܐ</title>
-            <title xml:id="name9999-3" xml:lang="en" source="#bib9999-5">History of the World</title>
+            <title xml:id="name9999-3" xml:lang="en" source="#bib9999-4">History of the World</title>
             <author ref="http://syriaca.org/person/239"
                     role="http://syriaca.org/documentation/author-editor-roles.xml#claimed"
-                    source="#bib9999-5">
+                    source="#bib9999-4">
                <persName xml:lang="en" instant="false" full="yes">
                         Gregorius
                         bar Hebraeus
@@ -202,13 +202,13 @@
                   syriaca-computed-start="1150-01-01"
                   notAfter="1350"
                   syriaca-computed-end="1350-01-01"
-                  source="#bib9999-5">13th century</date>
+                  source="#bib9999-4">13th century</date>
             <note xml:id="abstract-en-9999" xml:lang="en" type="abstract">The first part of Bar Hebraeus' Chronicle; an account of secular history from the time of Adam until Bar Hebraeus' own time (the 13th century). Through the 12th century, it is largely an abridgement of Michael the Syrian's Chronicle.</note>
-            <note xml:lang="syr" type="incipit" source="#bib9999-5">ܩܕܡܝܬ ܥܘܬܕܐ ܠܣܘܥܪ̈ܢܐ ܡܿܢ ܥܠܡܢ̈ܝܐ ܡܢ ܡܟܬܒ̈ܢܘܬܐ ܦܬܝܼܟ̈ـܐ ܘܡܫ̈ܠܡܢܘܬܐ ܣܒ̈ܝـ[ـܢـ]ـܬܐ ܟܕ ܐܝܟ ܕܐܬܡܿܨܝܬ ܥܕܡܐ ܠܝܘܡ̈ܬܝ ܝܿܒܠܬ.</note>
-            <note xml:lang="en" type="incipit" source="#bib9999-5">Here is a test English incipit.</note>
+            <note xml:lang="syr" type="incipit" source="#bib9999-4">ܩܕܡܝܬ ܥܘܬܕܐ ܠܣܘܥܪ̈ܢܐ ܡܿܢ ܥܠܡܢ̈ܝܐ ܡܢ ܡܟܬܒ̈ܢܘܬܐ ܦܬܝܼܟ̈ـܐ ܘܡܫ̈ܠܡܢܘܬܐ ܣܒ̈ܝـ[ـܢـ]ـܬܐ ܟܕ ܐܝܟ ܕܐܬܡܿܨܝܬ ܥܕܡܐ ܠܝܘܡ̈ܬܝ ܝܿܒܠܬ.</note>
+            <note xml:lang="en" type="incipit" source="#bib9999-4">Here is a test English incipit.</note>
             <bibl default="false"
                   status="draft"
-                  xml:id="bib9999-2"
+                  xml:id="bib9999-1"
                   type="lawd:Edition">
                <title level="m">Chronicon Syriacum</title>
                <ptr target="http://syriaca.org/bibl/2280"/>
@@ -216,25 +216,27 @@
             </bibl>
             <bibl default="false"
                   status="draft"
-                  xml:id="bib9999-3"
+                  xml:id="bib9999-2"
                   type="lawd:Translation">
                <title level="m">Ankuendigung und Probe einer neuen kritischen Ausgabe und neuen
                 Uebersetzung der Syrischen Chronik des Gregor Bar-Hebraeus</title>
                <ptr target="http://syriaca.org/bibl/2282"/>
                <citedRange unit="pp">1-50</citedRange>
+               <lang>lat</lang>
             </bibl>
             <bibl default="false"
                   status="draft"
-                  xml:id="bib9999-4"
+                  xml:id="bib9999-3"
                   type="lawd:Translation">
                <title level="m">De rebus gestis Richardi Angliæ regis in Palæstina: Excerptum ex
                 Gregorii Abulpharagii chronico syriaco</title>
                <ptr target="http://syriaca.org/bibl/2283"/>
                <citedRange unit="pp">2-83</citedRange>
+               <lang>lat</lang>
             </bibl>
             <bibl default="false"
                   status="draft"
-                  xml:id="bib9999-5"
+                  xml:id="bib9999-4"
                   type="lawd:Citation">
                <title xml:lang="en">A Short History of Syriac Literature</title>
                <ptr target="http://syriaca.org/bibl/639"/>
