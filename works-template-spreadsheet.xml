@@ -36,9 +36,13 @@
         <Translation_1></Translation_1>
         <citedRange_pp.Translation_1></citedRange_pp.Translation_1>
         <lang.Translation_1></lang.Translation_1>
+        <witnesses.Translation_1>Names of columns containing ids of manuscripts, editions, etc. that are witnesses for this work. Separate multiple items with commas.</witnesses.Translation_1>
         <Version_1></Version_1>
         <citedRange_pp.Version_1></citedRange_pp.Version_1>
         <lang.Version_1></lang.Version_1>
+        <Ms_1></Ms_1>
+        <Ms_2></Ms_2>
+        <Ms_3></Ms_3>
     </row>
     <row>
         <New_URI>9999</New_URI>
@@ -75,8 +79,12 @@
         <Translation_1>2282</Translation_1>
         <citedRange_pp.Translation_1>1-50</citedRange_pp.Translation_1>
         <lang.Translation_1>lat</lang.Translation_1>
+        <witnesses.Translation_1>Ms 1, Ms 2</witnesses.Translation_1>
         <Version_1>2283</Version_1>
         <citedRange_pp.Version_1>2-83</citedRange_pp.Version_1>
         <lang.Version_1>lat</lang.Version_1>
+        <Ms_1>103#a2</Ms_1>
+        <Ms_2>118#b1</Ms_2>
+        <Ms_3></Ms_3>
     </row>
 </root>
