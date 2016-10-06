@@ -274,7 +274,7 @@
     <!-- specifies where the output TEI files should go -->
     <!-- !!! Change this to where you want the output files to be placed relative to the XML file being converted. 
         This should end with a trailing slash (/).-->
-    <xsl:variable name="directory">working-files/20161003/</xsl:variable>
+    <xsl:variable name="directory">sample-files/works/</xsl:variable>
 
     <!-- CUSTOM FUNCTIONS -->
     <!-- used in auto column-mapping to determine the element name and attributes that should be created for that column. 
