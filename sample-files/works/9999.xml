@@ -64,7 +64,7 @@
                                 License.</p>
                </licence>
             </availability>
-            <date instant="false">2016-10-06+02:00</date>
+            <date instant="false">2016-10-07+02:00</date>
          </publicationStmt>
          <seriesStmt>
             <title level="s">The Syriac Biographical Dictionary</title>
@@ -170,7 +170,7 @@
          <change who="http://syriaca.org/documentation/editors.xml#ngibson"
                  n="1.0"
                  status="draft"
-                 when="2016-10-06+02:00">CREATED: person</change>
+                 when="2016-10-07+02:00">CREATED: person</change>
       </revisionDesc>
    </teiHeader>
    <text>
@@ -182,10 +182,10 @@
                ana="http://syriaca.org/documentation/work-subject-classifications.xml#history-universal">
             <title xml:id="name9999-1" xml:lang="en" syriaca-tags="#syriaca-headword">Chronography, Part 1 (Chronicon Syriacum)</title>
             <title xml:id="name9999-2" xml:lang="syr" syriaca-tags="#syriaca-headword">ܦܠܓܘܬܐ ܩܕܡܝܬܐ ܕܟܪܘܢܘܓܪܦܝܐ</title>
-            <title xml:id="name9999-3" xml:lang="en" source="#bib9999-4">History of the World</title>
+            <title xml:id="name9999-3" xml:lang="en" source="#bib9999-6">History of the World</title>
             <author ref="http://syriaca.org/person/239"
                     role="http://syriaca.org/documentation/author-editor-roles.xml#claimed"
-                    source="#bib9999-4">
+                    source="#bib9999-6">
                <persName xml:lang="en" instant="false" full="yes">
                         Gregorius
                         bar Hebraeus
@@ -202,10 +202,10 @@
                   syriaca-computed-start="1150-01-01"
                   notAfter="1350"
                   syriaca-computed-end="1350-01-01"
-                  source="#bib9999-4">13th century</date>
+                  source="#bib9999-6">13th century</date>
             <note xml:id="abstract-en-9999" xml:lang="en" type="abstract">The first part of Bar Hebraeus' Chronicle; an account of secular history from the time of Adam until Bar Hebraeus' own time (the 13th century). Through the 12th century, it is largely an abridgement of Michael the Syrian's Chronicle.</note>
-            <note xml:lang="syr" type="incipit" source="#bib9999-4">ܩܕܡܝܬ ܥܘܬܕܐ ܠܣܘܥܪ̈ܢܐ ܡܿܢ ܥܠܡܢ̈ܝܐ ܡܢ ܡܟܬܒ̈ܢܘܬܐ ܦܬܝܼܟ̈ـܐ ܘܡܫ̈ܠܡܢܘܬܐ ܣܒ̈ܝـ[ـܢـ]ـܬܐ ܟܕ ܐܝܟ ܕܐܬܡܿܨܝܬ ܥܕܡܐ ܠܝܘܡ̈ܬܝ ܝܿܒܠܬ.</note>
-            <note xml:lang="en" type="incipit" source="#bib9999-4">Here is a test English incipit.</note>
+            <note xml:lang="syr" type="incipit" source="#bib9999-6">ܩܕܡܝܬ ܥܘܬܕܐ ܠܣܘܥܪ̈ܢܐ ܡܿܢ ܥܠܡܢ̈ܝܐ ܡܢ ܡܟܬܒ̈ܢܘܬܐ ܦܬܝܼܟ̈ـܐ ܘܡܫ̈ܠܡܢܘܬܐ ܣܒ̈ܝـ[ـܢـ]ـܬܐ ܟܕ ܐܝܟ ܕܐܬܡܿܨܝܬ ܥܕܡܐ ܠܝܘܡ̈ܬܝ ܝܿܒܠܬ.</note>
+            <note xml:lang="en" type="incipit" source="#bib9999-6">Here is a test English incipit.</note>
             <bibl default="false"
                   status="draft"
                   xml:id="bib9999-1"
@@ -237,6 +237,22 @@
             <bibl default="false"
                   status="draft"
                   xml:id="bib9999-4"
+                  type="lawd:WrittenWork">
+               <title xml:lang="en">BL Add MS 14439</title>
+               <ptr target="http://syriaca.org/manuscript/103#a2"/>
+               <citedRange unit="folio" from="29b" to="69">Foll. 29b-69</citedRange>
+            </bibl>
+            <bibl default="false"
+                  status="draft"
+                  xml:id="bib9999-5"
+                  type="lawd:WrittenWork">
+               <title xml:lang="en">BL Add MS 14446</title>
+               <ptr target="http://syriaca.org/manuscript/118#b1"/>
+               <citedRange unit="folio" from="1b" to="70">Foll. 1b-70</citedRange>
+            </bibl>
+            <bibl default="false"
+                  status="draft"
+                  xml:id="bib9999-6"
                   type="lawd:Citation">
                <title xml:lang="en">A Short History of Syriac Literature</title>
                <ptr target="http://syriaca.org/bibl/639"/>

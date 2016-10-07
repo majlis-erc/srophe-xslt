@@ -67,6 +67,7 @@
                     <xsl:when test="matches(name(),'^date\.')">date</xsl:when>
                     <xsl:when test="matches(name(),'^citedRange[\._]')">citedRange</xsl:when>
                     <xsl:when test="matches(name(),'^lang[\._]')">lang</xsl:when>
+                    <xsl:when test="matches(name(),'^witnesses[\._]')">witnesses</xsl:when>
                     <xsl:when test="matches(name(),'^idno[\._]')">idno</xsl:when>
                     <xsl:when test="matches(name(),'^relation[\._]')">relation</xsl:when>
                     <xsl:when test="matches(name(),'^note[\._]')">note</xsl:when>
@@ -78,39 +79,10 @@
             <xsl:if test="$element-name!='none'">
                 <xsl:element name="{$element-name}">
                     <!-- adds @xml:lang using the codes at the end of the column name (after the final dot). -->
-                    <!-- !!! Add any additional languages you need here. -->
-                    <xsl:choose>
-                        <xsl:when test="matches(name(),'\.en-x-gedsh$')">
-                            <xsl:attribute name="xml:lang" select="'en-x-gedsh'"/>
-                        </xsl:when>
-                        <xsl:when test="matches(name(),'\.en$')">
-                            <xsl:attribute name="xml:lang" select="'en'"/>
-                        </xsl:when>
-                        <xsl:when test="matches(name(),'\.syr$')">
-                            <xsl:attribute name="xml:lang" select="'syr'"/>
-                        </xsl:when>
-                        <xsl:when test="matches(name(),'\.syr-Syrj$')">
-                            <xsl:attribute name="xml:lang" select="'syr-Syrj'"/>
-                        </xsl:when>
-                        <xsl:when test="matches(name(),'\.syr-Syrn$')">
-                            <xsl:attribute name="xml:lang" select="'syr-Syrn'"/>
-                        </xsl:when>
-                        <xsl:when test="matches(name(),'\.ar$')">
-                            <xsl:attribute name="xml:lang" select="'ar'"/>
-                        </xsl:when>
-                        <xsl:when test="matches(name(),'\.fr$')">
-                            <xsl:attribute name="xml:lang" select="'fr'"/>
-                        </xsl:when>
-                        <xsl:when test="matches(name(),'\.de-x-baumstark$')">
-                            <xsl:attribute name="xml:lang" select="'de-x-baumstark'"/>
-                        </xsl:when>
-                        <xsl:when test="matches(name(),'\.de$')">
-                            <xsl:attribute name="xml:lang" select="'de'"/>
-                        </xsl:when>
-                        <xsl:when test="matches(name(),'\.la$')">
-                            <xsl:attribute name="xml:lang" select="'la'"/>
-                        </xsl:when>
-                    </xsl:choose>
+                    <xsl:variable name="lang-regex" select="'\.([a-z]{2,3}((\-[A-Z][a-z]{3})|(\-x\-[a-z]+))?)$'"/>
+                    <xsl:if test="matches(name(),$lang-regex)">
+                        <xsl:attribute name="xml:lang" select="replace(name(),concat('.*',$lang-regex),'$1')"/>                        
+                    </xsl:if>
                     <!-- adds @type based on the text immediately following the element name -->
                     <!-- !!! Add any additional types you need here. -->
                     <xsl:choose>
@@ -234,14 +206,14 @@
                     <!-- ??? This could be consolidated with the $date-source variable above. -->
                     <xsl:choose>
                         <!-- checks whether the column name contains the name of a source column, in the format ".Source_1" -->
-                        <xsl:when test="matches(name(),'\.(Source|Edition|Translation|Version)_[0-9]*')">
+                        <xsl:when test="matches(name(),'\.(Source|Edition|Translation|Version|Ms)_[0-9]+')">
                             <!-- splits the column name into parts at the dots -->
                             <xsl:variable name="tokenized-column-name"
                                 select="tokenize(name(),'\.')"/>
                             <xsl:variable name="source-name">
                                 <!-- grabs the part of the column name that contains the source column name -->
                                 <xsl:for-each select="$tokenized-column-name">
-                                    <xsl:if test="matches(.,'^(Source|Edition|Translation|Version)_[0-9]*')">
+                                    <xsl:if test="matches(.,'^(Source|Edition|Translation|Version|Ms)_[0-9]+')">
                                         <xsl:value-of select="."/>
                                     </xsl:if>
                                 </xsl:for-each>
@@ -284,7 +256,7 @@
         <xsl:param name="column-name" as="xs:string"/>
         <!-- separates the column name into its relevant parts -->
         <xsl:analyze-string select="$column-name"
-            regex="^([a-zA-Z0-9\-]+)(_([a-zA-Z0-9\-]+))?(\.((Source|Edition|Translation|Version)_[0-9]+))?(\.([a-zA-Z0-9\-]+))?$">
+            regex="^([a-zA-Z0-9\-]+)(_([a-zA-Z0-9\-]+))?(\.((Source|Edition|Translation|Version|Ms)_[0-9]+))?(\.([a-zA-Z0-9\-]+))?$">
             <xsl:matching-substring>
                 <elementName>
                     <xsl:value-of select="regex-group(1)"/>
@@ -613,16 +585,6 @@
                                     <xsl:copy-of select="$record-bibls/bibl"
                                         xpath-default-namespace="http://www.tei-c.org/ns/1.0"
                                         copy-namespaces="no"/>
-                                    
-                                    <!--<xsl:copy-of select="$record-bibls/bibl[@type='lawd:Edition']"
-                                        xpath-default-namespace="http://www.tei-c.org/ns/1.0"
-                                        copy-namespaces="no"/>
-                                    <xsl:copy-of select="$record-bibls/bibl[@type='lawd:Translation']"
-                                        xpath-default-namespace="http://www.tei-c.org/ns/1.0"
-                                        copy-namespaces="no"/>
-                                    <xsl:copy-of select="$record-bibls/bibl[@type='lawd:Citation']"
-                                        xpath-default-namespace="http://www.tei-c.org/ns/1.0"
-                                        copy-namespaces="no"/>-->
 
                                 <!-- RELATIONS -->
                                 <!-- imports relation elements from $converted-columns-->
@@ -1156,11 +1118,11 @@
         <!-- the contents of the spreadsheet row being processed -->
         <xsl:param name="this-row"/>
         <!-- creates a sequence of the column names of all the source columns used in the spreadsheet. -->
-        <xsl:variable name="sources" select="distinct-values($column-mapping//@sourceUriColumn[.=$this-row[.!='']/name()])"/>
+        <xsl:variable name="sources" select="distinct-values(($this-row[matches(name(),'^(Source|Edition|Translation|Version|Ms)_[0-9]*') and .!='']/name(),$column-mapping//@sourceUriColumn[.=$this-row[.!='']/name()]))"/>
         <!-- creates a bibl for each of the source columns used in the spreadsheet. -->
         <xsl:variable name="sources-sorted">
             <xsl:for-each select="$sources">
-                <xsl:sort select="index-of(('Edition','Translation','Version','Source'),replace(.,'_[0-9]+',''))"/>
+                <xsl:sort select="index-of(('Edition','Translation','Version','Ms','Source'),replace(.,'_[0-9]+',''))"/>
                 <xsl:copy-of select="."/>
             </xsl:for-each>
         </xsl:variable>
@@ -1178,12 +1140,15 @@
                 <xsl:variable name="this-column-position" select="position()"/>
                 <xsl:if test=".!=''">
                     <xsl:variable name="this-column" select="name()"/>
-                    <!-- gets the citedRange from $column-mapping that names this column as its @sourceUriColumn -->
+                    <!-- gets the citedRange from $column-mapping column that names this column as its @sourceUriColumn -->
                     <xsl:variable name="cited-ranges"
                         select="$column-mapping/citedRange[@sourceUriColumn=$this-column]"/>
-                    <!-- gets the lang from $column-mapping that names this column as its @sourceUriColumn -->
+                    <!-- gets the lang from $column-mapping column that names this column as its @sourceUriColumn -->
                     <xsl:variable name="langs"
                         select="$column-mapping/lang[@sourceUriColumn=$this-column]"/>
+                    <!-- gets the witnesses from $column-mapping column that names this column as its @sourceUriColumn -->
+                    <xsl:variable name="witnesses"
+                        select="$column-mapping/witnesses[@sourceUriColumn=$this-column]"/>
                         <!-- checks whether source is a manuscript or regular bibliographic item -->
                         <xsl:variable name="bibl-or-ms">
                             <xsl:choose>
@@ -1193,7 +1158,7 @@
                         </xsl:variable>
                         <xsl:variable name="server-address" select="'http://wwwb.library.vanderbilt.edu/'"/>
                         <!-- creates the path to the bibl TEI using the URI number from the cell being processed -->
-                        <xsl:variable name="bibl-url" select="concat($server-address,$bibl-or-ms,'/',.,'/tei')"/>
+                        <xsl:variable name="bibl-url" select="concat($server-address,$bibl-or-ms,'/',replace(.,'#.*$',''),'/tei')"/>
 
                         <!-- BIBL ELEMENT -->
                         <bibl>
@@ -1239,23 +1204,23 @@
                                         <xsl:value-of select="normalize-space($this-cited-range-non-URL)"/>
                                     </xsl:element>
                                 </xsl:if>
-                                <xsl:if test="matches($bibl-url,'#') and not(string-length($this-cited-range-content))">
-                                    <xsl:variable name="msItem-id" select="replace($bibl-url,'^.*#','')"/>
-                                    <xsl:variable name="locus">
-                                        <xsl:copy-of
-                                            select="document($bibl-url)/TEI//msItem[@xml:id=$msItem-id]/locus"
-                                            xpath-default-namespace="http://www.tei-c.org/ns/1.0"/>
-                                    </xsl:variable>
-                                    <xsl:if test="$locus">
-                                        <xsl:element name="citedRange">
-                                            <xsl:attribute name="unit" select="'folio'"/>
-                                            <xsl:attribute name="from" select="$locus/locus/@from"/>
-                                            <xsl:attribute name="to" select="$locus/locus/@to"/>
-                                            <xsl:value-of select="$locus"/>
-                                        </xsl:element>
-                                    </xsl:if>
-                                </xsl:if>
                             </xsl:for-each>
+                            <xsl:if test="matches(.,'#') and not(string-length($this-row[name()=$cited-ranges/@column or position()=$cited-ranges/@column]))">
+                                <xsl:variable name="msItem-id" select="replace(.,'^.*#','')"/>
+                                <xsl:variable name="locus">
+                                    <xsl:copy-of
+                                        select="document($bibl-url)/TEI//msItem[@xml:id=$msItem-id]/locus"
+                                        xpath-default-namespace="http://www.tei-c.org/ns/1.0"/>
+                                </xsl:variable>
+                                <xsl:if test="$locus">
+                                    <xsl:element name="citedRange">
+                                        <xsl:attribute name="unit" select="'folio'"/>
+                                        <xsl:attribute name="from" select="$locus/tei:locus/@from"/>
+                                        <xsl:attribute name="to" select="$locus/tei:locus/@to"/>
+                                        <xsl:value-of select="$locus"/>
+                                    </xsl:element>
+                                </xsl:if>
+                            </xsl:if>
                             <!-- adds the lang when present -->
                             <xsl:for-each select="$langs">
                                 <xsl:variable name="this-lang" select="."/>
