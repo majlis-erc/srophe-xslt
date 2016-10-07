@@ -36,7 +36,7 @@
         <Translation_1></Translation_1>
         <citedRange_pp.Translation_1></citedRange_pp.Translation_1>
         <lang.Translation_1></lang.Translation_1>
-        <witnesses.Translation_1>Names of columns containing ids of manuscripts, editions, etc. that are witnesses for this work. Separate multiple items with commas.</witnesses.Translation_1>
+        <witnesses.Translation_1.Source_1>Names of columns containing ids of manuscripts, editions, etc. that are witnesses for this work. Separate multiple items with commas.</witnesses.Translation_1.Source_1>
         <Version_1></Version_1>
         <citedRange_pp.Version_1></citedRange_pp.Version_1>
         <lang.Version_1></lang.Version_1>
@@ -79,7 +79,7 @@
         <Translation_1>2282</Translation_1>
         <citedRange_pp.Translation_1>1-50</citedRange_pp.Translation_1>
         <lang.Translation_1>lat</lang.Translation_1>
-        <witnesses.Translation_1>Ms 1, Ms 2</witnesses.Translation_1>
+        <witnesses.Translation_1.Source_1>Ms 1, Ms 2</witnesses.Translation_1.Source_1>
         <Version_1>2283</Version_1>
         <citedRange_pp.Version_1>2-83</citedRange_pp.Version_1>
         <lang.Version_1>lat</lang.Version_1>

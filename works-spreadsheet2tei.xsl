@@ -76,10 +76,10 @@
                     <xsl:otherwise>none</xsl:otherwise>
                 </xsl:choose>
             </xsl:variable>
+            <xsl:variable name="lang-regex" select="'\.([a-z]{2,3}((\-[A-Z][a-z]{3})|(\-x\-[a-z]+))?)$'"/>
             <xsl:if test="$element-name!='none'">
                 <xsl:element name="{$element-name}">
                     <!-- adds @xml:lang using the codes at the end of the column name (after the final dot). -->
-                    <xsl:variable name="lang-regex" select="'\.([a-z]{2,3}((\-[A-Z][a-z]{3})|(\-x\-[a-z]+))?)$'"/>
                     <xsl:if test="matches(name(),$lang-regex)">
                         <xsl:attribute name="xml:lang" select="replace(name(),concat('.*',$lang-regex),'$1')"/>                        
                     </xsl:if>
@@ -209,14 +209,12 @@
                         <xsl:when test="matches(name(),'\.(Source|Edition|Translation|Version|Ms)_[0-9]+')">
                             <!-- splits the column name into parts at the dots -->
                             <xsl:variable name="tokenized-column-name"
-                                select="tokenize(name(),'\.')"/>
+                                select="tokenize(replace(name(),$lang-regex,''),'\.')"/>
                             <xsl:variable name="source-name">
                                 <!-- grabs the part of the column name that contains the source column name -->
-                                <xsl:for-each select="$tokenized-column-name">
-                                    <xsl:if test="matches(.,'^(Source|Edition|Translation|Version|Ms)_[0-9]+')">
-                                        <xsl:value-of select="."/>
-                                    </xsl:if>
-                                </xsl:for-each>
+                                <xsl:if test="matches($tokenized-column-name[last()],'^(Source|Edition|Translation|Version|Ms)_[0-9]+')">
+                                    <xsl:value-of select="$tokenized-column-name[last()]"/>
+                                </xsl:if>
                             </xsl:variable>
                             <!-- adds the name of the source column as @sourceUriColumn -->
                             <xsl:attribute name="sourceUriColumn" select="$source-name"/>
@@ -1134,7 +1132,7 @@
             
             <!-- source column -->
             <xsl:variable name="source-column" select="$this-row[name()=$source-uri-column]"/>
-            <!-- or, alternatively, source column if it has content in the cited range -->
+            <!-- or, alternatively, source column if it has content in the cited range. Note this may create problem for "witnesses" columns. -->
             <!--<xsl:variable name="source-column" select="$this-row[name()=$source-uri-column and $has-cited-range]">-->
             <xsl:for-each select="$source-column">
                 <xsl:variable name="this-column-position" select="position()"/>
@@ -1146,9 +1144,15 @@
                     <!-- gets the lang from $column-mapping column that names this column as its @sourceUriColumn -->
                     <xsl:variable name="langs"
                         select="$column-mapping/lang[@sourceUriColumn=$this-column]"/>
-                    <!-- gets the witnesses from $column-mapping column that names this column as its @sourceUriColumn -->
+                    <!-- gets the witnesses for this source from $column-mapping column. This is a different column from the @sourceUriColumn, which would represent the 
+                        optional source column name appended to the end of the witnesses column name. -->
+                    <xsl:variable name="witnesses-column-start" select="concat('witnesses.',$this-column)"/>
+                    <xsl:variable name="witnesses-column" select="$this-row[starts-with(name(),$witnesses-column-start)]"/>
+                    <xsl:variable name="witnesses-column-position">
+                        <xsl:if test="$witnesses-column"><xsl:value-of select="index-of($this-row,$witnesses-column)"/></xsl:if>
+                    </xsl:variable>
                     <xsl:variable name="witnesses"
-                        select="$column-mapping/witnesses[@sourceUriColumn=$this-column]"/>
+                        select="$column-mapping/witnesses[@column=$witnesses-column-position]"/>
                         <!-- checks whether source is a manuscript or regular bibliographic item -->
                         <xsl:variable name="bibl-or-ms">
                             <xsl:choose>
@@ -1163,8 +1167,8 @@
                         <!-- BIBL ELEMENT -->
                         <bibl>
                             <!-- adds an @xml:id in the format "bib000-0", where 000 is the ID of this record and 0 is the number of this <bibl>  -->
-                            <xsl:attribute name="xml:id"
-                                select="concat('bib',$record-id,'-',index-of($sources-sorted-tokenized,$source-uri-column))"/>
+                            <xsl:variable name="bib-id" select="concat('bib',$record-id,'-',index-of($sources-sorted-tokenized,$source-uri-column))"/>
+                            <xsl:attribute name="xml:id" select="$bib-id"/>
                             <!-- adds an RDF-friendly @type attribute to the bibl element -->
                             <xsl:choose>
                                 <xsl:when test="matches(name(),'Edition_')"><xsl:attribute name="type" select="'lawd:Edition'"/></xsl:when>
@@ -1228,6 +1232,23 @@
                                 <xsl:element name="lang">
                                     <xsl:value-of select="$this-lang-content"/>
                                 </xsl:element>
+                            </xsl:for-each>
+                            <!-- adds witnesses when present -->
+                            <xsl:for-each select="$witnesses">
+                                <xsl:variable name="this-witness" select="."/>
+                                <xsl:variable name="witness-content" select="$this-row[name()=$this-witness/@column or position()=$this-witness/@column]"/>
+                                <xsl:variable name="witnesses-tokenized" select="tokenize(replace($witness-content,'\s','_'),',_?')"/>
+                                <xsl:variable name="witnesses-source-bib-id" select="concat('bib',$record-id,'-',index-of($sources-sorted-tokenized,$this-witness/@sourceUriColumn))"/>
+                                <listRelation>
+                                    <xsl:variable name="witness-bib-ids">
+                                        <xsl:for-each select="$witnesses-tokenized">
+                                            <xsl:copy-of select="concat('#bib',$record-id,'-',index-of($sources-sorted-tokenized,.))"/>
+                                        </xsl:for-each>
+                                    </xsl:variable>
+                                    <!-- ??? Should we drop relation/@type since "mssWitnesses", "translationSource", etc. don't really handle 
+                                    situations where an edition is using another edition and so on? -->
+                                    <relation active="{concat('#',$bib-id)}" ref="dct:source" passive="{$witness-bib-ids}" source="{concat('#',$witnesses-source-bib-id)}"/>
+                                </listRelation>
                             </xsl:for-each>
                         </bibl>
                 </xsl:if>

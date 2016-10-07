@@ -223,6 +223,13 @@
                <ptr target="http://syriaca.org/bibl/2282"/>
                <citedRange unit="pp">1-50</citedRange>
                <lang>lat</lang>
+               <listRelation>
+                  <relation active="#bib9999-2"
+                            ref="dct:source"
+                            passive="#bib9999-4 #bib9999-5"
+                            source="#bib9999-6"
+                            instant="false"/>
+               </listRelation>
             </bibl>
             <bibl default="false"
                   status="draft"
