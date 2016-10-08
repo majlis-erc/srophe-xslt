@@ -1165,7 +1165,7 @@
                         <xsl:variable name="bibl-url" select="concat($server-address,$bibl-or-ms,'/',replace(.,'#.*$',''),'/tei')"/>
 
                         <!-- BIBL ELEMENT -->
-                        <bibl>
+                        <xsl:element name="bibl">
                             <!-- adds an @xml:id in the format "bib000-0", where 000 is the ID of this record and 0 is the number of this <bibl>  -->
                             <xsl:variable name="bib-id" select="concat('bib',$record-id,'-',index-of($sources-sorted-tokenized,$source-uri-column))"/>
                             <xsl:attribute name="xml:id" select="$bib-id"/>
@@ -1247,10 +1247,15 @@
                                     </xsl:variable>
                                     <!-- ??? Should we drop relation/@type since "mssWitnesses", "translationSource", etc. don't really handle 
                                     situations where an edition is using another edition and so on? -->
-                                    <relation active="{concat('#',$bib-id)}" ref="dct:source" passive="{$witness-bib-ids}" source="{concat('#',$witnesses-source-bib-id)}"/>
+                                    <xsl:element name="relation">
+                                        <xsl:attribute name="active" select="concat('#',$bib-id)"/>
+                                        <xsl:attribute name="ref" select="'dct:source'"/>
+                                        <xsl:attribute name="passive" select="$witness-bib-ids"/>
+                                        <xsl:attribute name="source" select="concat('#',$witnesses-source-bib-id)"/>
+                                    </xsl:element>
                                 </listRelation>
                             </xsl:for-each>
-                        </bibl>
+                        </xsl:element>
                 </xsl:if>
             </xsl:for-each>
         </xsl:for-each>
