@@ -31,8 +31,6 @@
             4. add to the column-mapping and bibls TEMPLATES any attributes that we haven't used before. 
             NB: * Each cell in the spreadsheet must contain data from only one source.
                 * The spreadsheet must contain a column named "New_URI". This column should not be "mapped" below; it is hard-coded into the stylesheet.
-                * A bibl_ana column is also hard-coded into the stylesheet, but is not required. The values in this column determine what (if anything) goes into the work/@ana attribute,
-                and which series statements are used.
                 * Each record should have at least one column marked with syriaca-tags="#syriaca-headword", otherwise it will be placed into the "incomplete" folder.
                 * It's fine to map multiple spreadsheets below, as long as they don't contain columns with the same names but different attributes (e.g., @source or @xml:lang). 
                 * Columns for <sex> element will go into the @value. If they contain the abbreviations "M" or "F", then "male" or "female" will be inserted into the element content.
@@ -57,7 +55,7 @@
             <xsl:variable name="element-name" as="xs:string">
                 <!-- chooses the name for the TEI element, based on the part of the column name before any (_) or (.). -->
                 <!-- !!! If you want to add another type of TEI element, you should add it here and also in the main ("/root") template under 
-                        TEI/text/body/bibl (see format there). If the default behavior of placing the column contents directly inside this element 
+                        TEI/text/body/entryFree (see format there). If the default behavior of placing the column contents directly inside this element 
                         is not adequate, you should also modify the column-mapping template below. -->
                 <xsl:choose>
                     <xsl:when test="matches(name(),'^title[\._]')">title</xsl:when>
@@ -73,6 +71,8 @@
                     <xsl:when test="matches(name(),'^relation[\._]')">relation</xsl:when>
                     <xsl:when test="matches(name(),'^note[\._]')">note</xsl:when>
                     <xsl:when test="matches(name(),'^extent[\._]')">extent</xsl:when>
+                    <xsl:when test="matches(name(),'^term[\._]')">term</xsl:when>
+                    <xsl:when test="matches(name(),'^gloss[\._]')">gloss</xsl:when>
                     <!-- a non-empty string is required in this variable type, thus "none" -->
                     <xsl:otherwise>none</xsl:otherwise>
                 </xsl:choose>
@@ -87,21 +87,6 @@
                     <!-- adds @type based on the text immediately following the element name -->
                     <!-- !!! Add any additional types you need here. -->                    
                     <xsl:choose>
-                        <xsl:when test="matches(name(),'^[a-zA-Z]*_abstract')">
-                            <xsl:attribute name="type" select="'abstract'"/>
-                        </xsl:when>
-                        <xsl:when test="matches(name(),'^[a-zA-Z]*_incipit')">
-                            <xsl:attribute name="type" select="'incipit'"/>
-                        </xsl:when>
-                        <xsl:when test="matches(name(),'^[a-zA-Z]*_explicit')">
-                            <xsl:attribute name="type" select="'explicit'"/>
-                        </xsl:when>
-                        <xsl:when test="matches(name(),'^[a-zA-Z]*_prologue')">
-                            <xsl:attribute name="type" select="'prologue'"/>
-                        </xsl:when>
-                        <xsl:when test="matches(name(),'^[a-zA-Z]*_final-rubric')">
-                            <xsl:attribute name="type" select="'final-rubric'"/>
-                        </xsl:when>
                         <xsl:when test="matches(name(),'^[a-zA-Z]*_abbreviation')">
                             <xsl:attribute name="type" select="'abbreviation'"/>
                         </xsl:when>
@@ -119,26 +104,26 @@
                     <!-- adds @when, @notBefore, @notAfter attributes to date columns -->
                     <!-- ??? dates for state not supported yet. -->
                     <!-- !!! You can add more date-type elements here. -->
-                    <xsl:if test="matches(name(),'^date\.')">
+                    <!--<xsl:if test="matches(name(),'^date\.')">
                         <xsl:variable name="date-type">
-                            <!-- captures the type of element -->
+                            <!-\- captures the type of element -\->
                             <xsl:choose>
                                 <xsl:when test="matches(name(),'^date\.')">date</xsl:when>
                             </xsl:choose>
                         </xsl:variable>
                         <xsl:variable name="date-source">
-                            <!-- captures the name of the source column this column is using, to use when constructing the machine-readable date attribute columns below -->
+                            <!-\- captures the name of the source column this column is using, to use when constructing the machine-readable date attribute columns below -\->
                             <xsl:analyze-string select="name()" regex="Source_[0-9]+">
                                 <xsl:matching-substring>
                                     <xsl:value-of select="."/>
                                 </xsl:matching-substring>
                             </xsl:analyze-string>
                         </xsl:variable>
-                        <!-- gets the names of the columns used for @when, @notBefore, and @notAfter machine-readable dates and puts them into attributes. 
+                        <!-\- gets the names of the columns used for @when, @notBefore, and @notAfter machine-readable dates and puts them into attributes. 
                                 Note that the column-mapping creates only one element per category of date (e.g., "birth", "death", "floruit"), not one for each of the 
-                                associated machine-readable columns (e.g., "birth notBefore"). -->
-                        <!-- ??? The following regex will run into problems if there are more than 10 sources with the same prefix! (E.g., 'Source_1' will also match 'Source_11') -->
-                        <!-- ??? This could be made more efficient with variables -->
+                                associated machine-readable columns (e.g., "birth notBefore"). -\->
+                        <!-\- ??? The following regex will run into problems if there are more than 10 sources with the same prefix! (E.g., 'Source_1' will also match 'Source_11') -\->
+                        <!-\- ??? This could be made more efficient with variables -\->
                         <xsl:if
                             test="/root/row[1]/*[matches(name(),concat($date-type,'_when','\.',$date-source))]">
                             <xsl:attribute name="whenColumn"
@@ -157,46 +142,7 @@
                                 select="name(/root/row[1]/*[matches(name(),concat($date-type,'_notAfter','\.',$date-source))])"
                             />
                         </xsl:if>
-                    </xsl:if>
-                    
-                    <!-- processes author/editor elements -->
-                    <xsl:if test="matches(name(),'^author_ref|^editor_ref')">
-                        <xsl:variable name="author-type">
-                            <!-- captures the type of element -->
-                            <xsl:choose>
-                                <xsl:when test="matches(name(),'^author[\._]')">author</xsl:when>
-                            </xsl:choose>
-                            <xsl:choose>
-                                <xsl:when test="matches(name(),'^editor[\._]')">editor</xsl:when>
-                            </xsl:choose>
-                        </xsl:variable>
-                        <xsl:variable name="author-source">
-                            <!-- captures the name of the source column this column is using, to use when constructing the machine-readable date attribute columns below -->
-                            <xsl:analyze-string select="name()" regex="Source_[0-9]+">
-                                <xsl:matching-substring>
-                                    <xsl:value-of select="."/>
-                                </xsl:matching-substring>
-                            </xsl:analyze-string>
-                        </xsl:variable>
-                        <!-- gets the names of the columns used for @ref and @role and puts them into attributes. 
-                                Note that the column-mapping creates only one element per category of author (e.g., "birth", "death", "floruit"), not one for each of the 
-                                associated machine-readable columns (e.g., "birth notBefore"). -->
-                        <!-- ??? The following regex will run into problems if there are more than 10 sources with the same prefix! (E.g., 'Source_1' will also match 'Source_11') -->
-                        <!-- ??? This could be made more efficient with variables -->
-                        <!-- ??? This might have problems if there are multiple columns with the same type and source -->
-                        
-                        
-                            <xsl:variable name="refColumn" select="name()"/>
-                            <xsl:attribute name="refColumn" select="$refColumn"/>
-                        
-                            <xsl:if
-                                test="/root/row[1]/*[matches(name(),concat($author-type,'_role','(\.',$author-source,')?'))]">
-                                <xsl:attribute name="roleColumn"
-                                    select="name(/root/row[1]/*[matches(name(),concat($author-type,'_role','(\.',$author-source,')?'))])"
-                                />
-                            </xsl:if>
-                        
-                    </xsl:if>
+                    </xsl:if>-->
 
                     <!-- adds relation name, using as a value the text in the column name immediately after the element name ("relation_"). 
                     Triple hyphens are turned into colons (:) to allow prefixed namespaces. -->
@@ -251,7 +197,7 @@
     <!-- specifies where the output TEI files should go -->
     <!-- !!! Change this to where you want the output files to be placed relative to the XML file being converted. 
         This should end with a trailing slash (/).-->
-    <xsl:variable name="directory">sample-files/works/</xsl:variable>
+    <xsl:variable name="directory">sample-files/keywords/</xsl:variable>
 
     <!-- CUSTOM FUNCTIONS -->
     <!-- used in auto column-mapping to determine the element name and attributes that should be created for that column. 
@@ -455,8 +401,8 @@
     <!-- MAIN TEMPLATE -->
     <!-- processes each row of the spreadsheet -->
     <xsl:template match="/root">
-        <!-- creates ids for new works. -->
-        <!-- ??? How should we deal with matched works, where the existing TEI records need to be supplemented? -->
+        <!-- creates ids for new keywords. -->
+        <!-- ??? How should we deal with matched keywords, where the existing TEI records need to be supplemented? -->
         <xsl:for-each select="row[not(contains(.,'***'))]">
             <xsl:variable name="record-id">
                 <!-- gets a record ID from the New_URI column, or generates one if that column is blank -->
@@ -471,7 +417,7 @@
             </xsl:variable>
 
             <!-- creates the URI from the record ID -->
-            <xsl:variable name="record-uri" select="concat('http://syriaca.org/work/',New_URI)"/>
+            <xsl:variable name="record-uri" select="concat('http://syriaca.org/subject/',New_URI)"/>
 
             <!-- creates bibls for this record (row) using the @sourceUriColumn attributes defined in $column-mapping -->
             <xsl:variable name="record-bibls">
@@ -528,16 +474,12 @@
                         </xsl:call-template>
                         <text>
                             <body>
-                                <bibl>
-                                    <!-- creates an @xml:id and adds it to the bibl element -->
+                                <entryFree>
+                                    <!-- creates an @xml:id and adds it to the entryFree element -->
                                     <xsl:attribute name="xml:id"
-                                        select="concat('work-', $record-id)"/>
+                                        select="concat('keyword-', $record-id)"/>
                                     <xsl:attribute name="type"
-                                        select="'lawd:ConceptualWork'"/>
-                                    <!-- adds the bibl subject and genre tags -->
-                                    <xsl:if test="bibl_ana!=''">
-                                        <xsl:attribute name="ana" select="bibl_ana"/>
-                                    </xsl:if>
+                                        select="'skos:Concept'"/>
 
                                     <!-- allows referencing the current row within nested for-each statements -->
                                     <xsl:variable name="this-row" select="."/>
@@ -548,28 +490,10 @@
                                     <!-- !!! If you have added any new types of elements in $column-mapping, you must call them here. 
                                 You must include @xpath-default-namespace="http://www.tei-c.org/ns/1.0" 
                                 You can also change the order of these elements according to your preference, so long as it still produces valid TEI. -->
-                                    <xsl:copy-of select="syriaca:add-xml-id(syriaca:consolidate-sources($converted-columns/title),$record-id,'name')"
-                                        xpath-default-namespace="http://www.tei-c.org/ns/1.0"/>
-                                    <xsl:copy-of select="$converted-columns/author"
-                                        xpath-default-namespace="http://www.tei-c.org/ns/1.0"/>
-                                    <xsl:copy-of select="$converted-columns/editor"
+                                    <xsl:copy-of select="syriaca:add-xml-id(syriaca:consolidate-sources($converted-columns/term),$record-id,'name')"
                                         xpath-default-namespace="http://www.tei-c.org/ns/1.0"/>
                                     
-                                    <!-- IDNO -->
-                                    <!-- gives the work URI as an idno -->
-                                    <xsl:if test="New_URI != ''">
-                                        <idno type="URI">
-                                            <xsl:value-of select="$record-uri"/>
-                                        </idno>
-                                    </xsl:if>
-                                    <xsl:copy-of select="$converted-columns/idno"
-                                        xpath-default-namespace="http://www.tei-c.org/ns/1.0"/>
-                                    
-                                    <textLang mainLang="syr"/>
-                                    
-                                    <xsl:copy-of select="syriaca:consolidate-sources($converted-columns/date)"
-                                        xpath-default-namespace="http://www.tei-c.org/ns/1.0"/>
-                                    <xsl:copy-of select="syriaca:consolidate-sources($converted-columns/extent)"
+                                    <xsl:copy-of select="$converted-columns/gloss"
                                         xpath-default-namespace="http://www.tei-c.org/ns/1.0"/>
                                     
                                     <xsl:if test="$converted-columns/tei:note[@type='abstract']!=''">
@@ -583,6 +507,26 @@
                                     </xsl:if>                                    
                                     <xsl:copy-of select="$converted-columns/note[@type!='abstract']"
                                         xpath-default-namespace="http://www.tei-c.org/ns/1.0"/>
+                                    
+                                    <!-- RELATIONS -->
+                                    <!-- imports relation elements from $converted-columns-->
+                                    <xsl:variable name="relations" select="$converted-columns/relation" xpath-default-namespace="http://www.tei-c.org/ns/1.0"/>
+                                    <xsl:if test="$relations">
+                                        <listRelation>
+                                            <xsl:copy-of select="syriaca:consolidate-sources($converted-columns/relation)"
+                                                xpath-default-namespace="http://www.tei-c.org/ns/1.0"/>
+                                        </listRelation>
+                                    </xsl:if>
+                                    
+                                    <!-- IDNO -->
+                                    <!-- gives the keyword URI as an idno -->
+                                    <xsl:if test="New_URI != ''">
+                                        <idno type="URI">
+                                            <xsl:value-of select="$record-uri"/>
+                                        </idno>
+                                    </xsl:if>
+                                    <xsl:copy-of select="$converted-columns/idno"
+                                        xpath-default-namespace="http://www.tei-c.org/ns/1.0"/>
 
                                     <!-- BIBLS -->
                                     <!-- inserts bibl elements created by the bibls template-->
@@ -590,17 +534,7 @@
                                         xpath-default-namespace="http://www.tei-c.org/ns/1.0"
                                         copy-namespaces="no"/>
 
-                                <!-- RELATIONS -->
-                                <!-- imports relation elements from $converted-columns-->
-                                <xsl:variable name="relations" select="$converted-columns/relation" xpath-default-namespace="http://www.tei-c.org/ns/1.0"/>
-                                <xsl:if test="$relations">
-                                    <listRelation>
-                                        <xsl:copy-of select="syriaca:consolidate-sources($converted-columns/relation)"
-                                            xpath-default-namespace="http://www.tei-c.org/ns/1.0"/>
-                                    </listRelation>
-                                </xsl:if>                              
-
-                                </bibl>
+                                </entryFree>
                             </body>
                         </text>
                     </TEI>
@@ -619,7 +553,7 @@
         <xsl:param name="record-id"/>
         <xsl:param name="converted-columns"/>
         <xsl:param name="en-headword"/>
-        <xsl:variable name="en-title">
+        <xsl:variable name="en-term">
             <!-- checks whether there is an English Syriaca headword. If not, just uses the record-id as the page title. -->
             <xsl:choose>
                 <xsl:when
@@ -628,18 +562,7 @@
                         select="$en-headword"
                     />
                 </xsl:when>
-                <xsl:otherwise>Work <xsl:value-of select="$record-id"/></xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>
-        <xsl:variable name="anonymous-description">
-            <!-- grabs the anonymous description, if there is one. -->
-            <xsl:choose>
-                <xsl:when
-                    test="$converted-columns/*[@syriaca-tags='#anonymous-description']">
-                    <xsl:value-of
-                        select="$converted-columns/*[@syriaca-tags='#anonymous-description']"
-                    />
-                </xsl:when>
+                <xsl:otherwise>Keyword <xsl:value-of select="$record-id"/></xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
         <xsl:variable name="syriac-headword">
@@ -655,10 +578,8 @@
         </xsl:variable>
         <!-- combines the English and Syriac headwords to make the record title -->
         <xsl:variable name="record-title">
-            <xsl:value-of select="$en-title"/>
+            <xsl:value-of select="$en-term"/>
             <xsl:choose>
-                <xsl:when test="string-length($anonymous-description)"> — <xsl:value-of
-                    select="$anonymous-description"/></xsl:when>
                 <xsl:when test="string-length($syriac-headword)"> — <foreign xml:lang="syr"><xsl:value-of
                     select="$syriac-headword"/></foreign></xsl:when>
             </xsl:choose>
@@ -679,7 +600,7 @@
                     <editor role="general" ref="http://syriaca.org/documentation/editors.xml#dmichelson">David A. Michelson</editor>
                     
                     <!-- CREATOR -->
-                    <!-- designates the editor responsible for creating this work record (may be different from the file creator) -->
+                    <!-- designates the editor responsible for creating this keyword record (may be different from the file creator) -->
                     <editor role="creator" ref="http://syriaca.org/documentation/editors.xml#ngibson">Nathan P. Gibson</editor>
                     <editor role="creator" ref="http://syriaca.org/documentation/editors.xml#dmichelson">David A. Michelson</editor>
                     
@@ -698,7 +619,7 @@
                 </editionStmt>
                 <publicationStmt>
                     <authority>Syriaca.org: The Syriac Reference Portal</authority>
-                    <idno type="URI">http://syriaca.org/work/<xsl:value-of select="$record-id"
+                    <idno type="URI">http://syriaca.org/subject/<xsl:value-of select="$record-id"
                         />/tei</idno>
                     <xsl:element name="availability">
                         <licence target="http://creativecommons.org/licenses/by/3.0/">
@@ -801,7 +722,7 @@
 
                 <!-- FILE CREATOR -->
                 <change who="http://syriaca.org/documentation/editors.xml#ngibson" n="1.0">
-                    <xsl:attribute name="when" select="current-date()"/>CREATED: work</change>
+                    <xsl:attribute name="when" select="current-date()"/>CREATED: keyword</change>
 
                 <!-- PLANNED CHANGES -->
                 <!-- ??? Are there any change @type='planned' ? -->
@@ -868,162 +789,102 @@
                         test="string(@column)=string($column-name) or string(@column)=string($column-position)">
                         <!-- creates an element with the same name as the $column-mapping element, 
                         unless it is an event attestation, which needs to create multiple elements -->
-                        <xsl:choose>
-                            <xsl:when test="name()='event' and @type='attestation'">
-                                <!-- Creates an event type="attestation" for each work URI -->
-                                <xsl:variable name="node-name" select="name()"/>
-                                <xsl:variable name="node-attributes" select="attribute::*[not(name()=$custom-attributes) and not(.!='')]"/>
-                                <xsl:variable name="attestation-URIs" select="tokenize($column-contents,'\s*,\s*')"/>
-                                <xsl:variable name="en-headword" select="normalize-space($columns-to-convert[matches(name(.),'.*syriaca\-headword.*\.en.*') and .!=''][1])"/>
-                                <xsl:for-each select="$attestation-URIs">
-                                    <!-- can replace this with localhost if there is error on dev server. Must have local exist running. -->
-                                    <!--<xsl:variable name="attesting-work-url" select="concat(replace(.,'http://syriaca.org','http://wwwb.library.vanderbilt.edu'),'/tei')"/>-->
-                                    <xsl:variable name="attesting-work-url" select="concat(replace(.,'http://syriaca.org/work/','http://wwwb.library.vanderbilt.edu/exist/apps/srophe/work/'),'/tei')"/>
-                                    <xsl:variable name="attesting-work-title">
-                                        <xsl:copy-of
-                                            select="document($attesting-work-url)/TEI/text/body/bibl/title[contains(@syriaca-tags,'#syriaca-headword') and starts-with(@xml:lang,'en')]"
-                                            xpath-default-namespace="http://www.tei-c.org/ns/1.0"/>
+                        
+                        <xsl:element name="{name()}">
+                            <!-- adds the general attributes defined in $column-mapping, plus date attributes-->
+                            <!-- !!! If you add new types of attributes in $column-mapping, you must also create them here -->
+                            <xsl:copy-of select="@*[not(name()=$custom-attributes)]"/>
+                            <xsl:if test="$when!=''">
+                                <xsl:attribute name="when" select="$when"/>
+                                <xsl:attribute name="syriaca-computed-start"
+                                    select="syriaca:custom-dates($when)"/>
+                            </xsl:if>
+                            <xsl:if test="$not-before!=''">
+                                <xsl:attribute name="notBefore" select="$not-before"/>
+                                <xsl:attribute name="syriaca-computed-start"
+                                    select="syriaca:custom-dates($not-before)"/>
+                            </xsl:if>
+                            <xsl:if test="$not-after!=''">
+                                <xsl:attribute name="notAfter" select="$not-after"/>
+                                <xsl:attribute name="syriaca-computed-end"
+                                    select="syriaca:custom-dates($not-after)"/>
+                            </xsl:if>
+                            <!-- adds the source column by matching the @sourceUriColumn (and corresponding citedRange, where present) to the available bibl ptr elements.  -->
+                            <xsl:choose>
+                                <xsl:when test="@sourceUriColumn!='' and $cited-range-contents!='' and tei:citedRange!=''">
+                                    <xsl:attribute name="source"
+                                        select="concat('#',$record-bibls/*[tei:ptr/@target=$column-uri and matches($cited-range-contents,tei:citedRange/text())][1]/@xml:id)"
+                                    />
+                                </xsl:when>
+                                <xsl:when test="@sourceUriColumn!=''">
+                                    <xsl:attribute name="source"
+                                        select="concat('#',$record-bibls/*[tei:ptr/@target=$column-uri][1]/@xml:id)"
+                                    />
+                                </xsl:when>
+                            </xsl:choose>
+                            <!-- creates element contents. Default is to put the contents of the column directly inside the element, but certain elements 
+                                have to be handled differently. -->
+                            <!-- !!! If you have added element types in $column-mapping that require special handling (e.g., as an attribute value or inside a <desc>), 
+                                you should process them here. -->
+                            <xsl:choose>
+                                <!-- processes gloss elements --> 
+                                <xsl:when test="name()='gloss'">
+                                    <term><xsl:copy-of select="$column-contents"/></term>
+                                </xsl:when>
+                                <!-- processes relation elements -->
+                                <xsl:when test="name()='relation'">
+                                    <!-- processes multiple comma-separated relation uris -->
+                                    <!-- ??? Need to sanitize possible spaces between uris using normalize-space()? -->
+                                    <xsl:variable name="tokenized-relation-uris">
+                                        <xsl:for-each select="tokenize($column-contents,',')">
+                                            <!-- makes a partial URI into a full URI -->
+                                            <xsl:if test="not(contains(.,'http'))"
+                                                >http://syriaca.org/subject/</xsl:if>
+                                            <xsl:value-of select="concat(.,' ')"/>
+                                        </xsl:for-each>
                                     </xsl:variable>
-                                    <xsl:element name="{$node-name}">
-                                        <xsl:copy-of select="$node-attributes"/>
-                                        <p xml:lang="en"><xsl:value-of select="$en-headword"/> is commemorated in <title ref="{.}"><xsl:value-of select="$attesting-work-title"/></title>.</p>
-                                    </xsl:element>
-                                </xsl:for-each>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:element name="{name()}">
-                                    <!-- adds the general attributes defined in $column-mapping, plus date attributes-->
-                                    <!-- !!! If you add new types of attributes in $column-mapping, you must also create them here -->
-                                    <xsl:copy-of select="@*[not(name()=$custom-attributes)]"/>
-                                    <xsl:if test="$when!=''">
-                                        <xsl:attribute name="when" select="$when"/>
-                                        <xsl:attribute name="syriaca-computed-start"
-                                            select="syriaca:custom-dates($when)"/>
-                                    </xsl:if>
-                                    <xsl:if test="$not-before!=''">
-                                        <xsl:attribute name="notBefore" select="$not-before"/>
-                                        <xsl:attribute name="syriaca-computed-start"
-                                            select="syriaca:custom-dates($not-before)"/>
-                                    </xsl:if>
-                                    <xsl:if test="$not-after!=''">
-                                        <xsl:attribute name="notAfter" select="$not-after"/>
-                                        <xsl:attribute name="syriaca-computed-end"
-                                            select="syriaca:custom-dates($not-after)"/>
-                                    </xsl:if>
-                                    <xsl:if test="$author-ref!=''">
-                                        <xsl:attribute name="ref" select="$author-ref"/>
-                                    </xsl:if>
-                                    <xsl:if test="$author-role!=''">
-                                        <xsl:attribute name="role" select="$author-role"/>
-                                    </xsl:if>
-                                    <!-- adds the source column by matching the @sourceUriColumn (and corresponding citedRange, where present) to the available bibl ptr elements.  -->
                                     <xsl:choose>
-                                        <xsl:when test="@sourceUriColumn!='' and $cited-range-contents!='' and tei:citedRange!=''">
-                                            <xsl:attribute name="source"
-                                                select="concat('#',$record-bibls/*[tei:ptr/@target=$column-uri and matches($cited-range-contents,tei:citedRange/text())][1]/@xml:id)"
-                                            />
+                                        <!-- adds possibly identical relation -->
+                                        <!-- !!! You can define more relation types here (and in $column-mapping) -->
+                                        <xsl:when test="@ref='possibly-identical'">
+                                            <xsl:attribute name="mutual"
+                                                select="concat($record-uri,' ',normalize-space($tokenized-relation-uris))"/>
+                                            <desc xml:lang="en">This keyword is possibly identical
+                                                with one or more keywords represented in another
+                                                record</desc>
                                         </xsl:when>
-                                        <xsl:when test="@sourceUriColumn!=''">
-                                            <xsl:attribute name="source"
-                                                select="concat('#',$record-bibls/*[tei:ptr/@target=$column-uri][1]/@xml:id)"
-                                            />
+                                        <xsl:when test="@ref='different-from'">
+                                            <xsl:attribute name="mutual"
+                                                select="concat($record-uri,' ',normalize-space($tokenized-relation-uris))"/>
+                                            <desc xml:lang="en">The following keywords are not identical but have been or could be confused: 
+                                                <xsl:value-of select="string-join(($record-uri,string-join(normalize-space($tokenized-relation-uris),', ')),', ')"/></desc>
                                         </xsl:when>
-                                    </xsl:choose>
-                                    <!-- creates element contents. Default is to put the contents of the column directly inside the element, but certain elements 
-                                        have to be handled differently. -->
-                                    <!-- !!! If you have added element types in $column-mapping that require special handling (e.g., as an attribute value or inside a <desc>), 
-                                        you should process them here. -->
-                                    <xsl:choose>
-                                        <!-- puts column contents inside a <label> -->
-                                        <xsl:when test="name()='state'">
-                                            <xsl:element name="label">
-                                                <xsl:value-of select="$column-contents"/>
-                                            </xsl:element>
+                                        <xsl:when test="@ref='has-relation-to-place'">
+                                            <xsl:attribute name="active"
+                                                select="$record-uri"/>
+                                            <xsl:attribute name="passive"
+                                                select="normalize-space($tokenized-relation-uris)"/>
+                                            <desc xml:lang="en">This keyword has an unspecified connection to places.</desc>
                                         </xsl:when>
-                                        <!-- puts column contents inside a <label> -->
-                                        <xsl:when test="name()='trait'">
-                                            <xsl:element name="label">
-                                                <xsl:value-of select="$column-contents"/>
-                                            </xsl:element>
-                                        </xsl:when>
-                                        <!-- processes relation elements -->
-                                        <xsl:when test="name()='relation'">
-                                            <!-- processes multiple comma-separated relation uris -->
-                                            <!-- ??? Need to sanitize possible spaces between uris using normalize-space()? -->
-                                            <xsl:variable name="tokenized-relation-uris">
-                                                <xsl:for-each select="tokenize($column-contents,',')">
-                                                    <!-- makes a partial URI into a full URI -->
-                                                    <xsl:if test="not(contains(.,'http'))"
-                                                        >http://syriaca.org/work/</xsl:if>
-                                                    <xsl:value-of select="concat(.,' ')"/>
-                                                </xsl:for-each>
-                                            </xsl:variable>
-                                            <xsl:choose>
-                                                <!-- adds possibly identical relation -->
-                                                <!-- !!! You can define more relation types here (and in $column-mapping) -->
-                                                <xsl:when test="@ref='possibly-identical'">
-                                                    <xsl:attribute name="mutual"
-                                                        select="concat($record-uri,' ',normalize-space($tokenized-relation-uris))"/>
-                                                    <desc xml:lang="en">This work is possibly identical
-                                                        with one or more works represented in another
-                                                        record</desc>
-                                                </xsl:when>
-                                                <xsl:when test="@ref='different-from'">
-                                                    <xsl:attribute name="mutual"
-                                                        select="concat($record-uri,' ',normalize-space($tokenized-relation-uris))"/>
-                                                    <desc xml:lang="en">The following works are not identical but have been or could be confused: 
-                                                        <xsl:value-of select="string-join(($record-uri,string-join(normalize-space($tokenized-relation-uris),', ')),', ')"/></desc>
-                                                </xsl:when>
-                                                <xsl:when test="@ref='has-relation-to-place'">
-                                                    <xsl:attribute name="active"
-                                                        select="$record-uri"/>
-                                                    <xsl:attribute name="passive"
-                                                        select="normalize-space($tokenized-relation-uris)"/>
-                                                    <desc xml:lang="en">This work has an unspecified connection to places.</desc>
-                                                </xsl:when>
-                                                <xsl:otherwise>
-                                                    <xsl:attribute name="active"
-                                                        select="$record-uri"/>
-                                                    <!-- ??? Something here seems to be causing a bug that garbles the passive URI if the record ID is contained in it. 
-                                                    E.g., if the relation should be 
-                                                        <relation ref="skos:broadMatch" active="http://syriaca.org/work/2" passive="http://syriaca.org/work/9632"/> 
-                                                    it is instead 
-                                                       <relation ref="skos:broadMatch" active="http://syriaca.org/work/2" passive="http://syriaca.org/work/963http://syriaca.org/work/2"/> -->
-                                                    <xsl:attribute name="passive" select="normalize-space($tokenized-relation-uris)"/>
-                                                </xsl:otherwise>
-                                            </xsl:choose>
-                                        </xsl:when>
-                                        <!-- creates <sex> and puts the column contents into the @value -->
-                                        <xsl:when test="name()='sex'">
-                                            <xsl:attribute name="value" select="$column-contents"/>
-                                            <!-- puts a long-form value into the element content -->
-                                            <!-- !!! Other abbreviations for <sex> could be spelled out here. -->
-                                            <xsl:choose>
-                                                <xsl:when test="$column-contents='M'">male</xsl:when>
-                                                <xsl:when test="$column-contents='F'">female</xsl:when>
-                                            </xsl:choose>
-                                        </xsl:when>
-                                        <xsl:when test="name()='author' or name()='editor'">
-                                            
-                                                <xsl:variable name="ref-persName">
-                                                    <xsl:copy-of
-                                                        select="document(concat($author-ref/text(),'/tei'))/TEI/text/body/listPerson/person/persName[contains(@syriaca-tags,'#syriaca-headword')]"
-                                                        xpath-default-namespace="http://www.tei-c.org/ns/1.0"/>
-                                                </xsl:variable>
-                                                <xsl:variable name="en-name" select="$ref-persName/tei:persName[starts-with(@xml:lang,'en')][1]"/>
-                                                <xsl:variable name="syr-name" select="$ref-persName/tei:persName[starts-with(@xml:lang,'syr')][1]"/>
-                                               
-                                            <persName xml:lang="{$en-name/@xml:lang}"><xsl:value-of select="$en-name"/></persName> — <persName xml:lang="{$syr-name/@xml:lang}"><xsl:value-of select="$syr-name"/></persName>
-                                            
-                                        </xsl:when>
-                                        <!-- if the column does not meet the above tests for special processing, the column contents are put directly into the element -->
                                         <xsl:otherwise>
-                                            <xsl:copy-of select="$column-contents"/>
+                                            <xsl:attribute name="active"
+                                                select="$record-uri"/>
+                                            <!-- ??? Something here seems to be causing a bug that garbles the passive URI if the record ID is contained in it. 
+                                            E.g., if the relation should be 
+                                                <relation ref="skos:broadMatch" active="http://syriaca.org/work/2" passive="http://syriaca.org/work/9632"/> 
+                                            it is instead 
+                                               <relation ref="skos:broadMatch" active="http://syriaca.org/work/2" passive="http://syriaca.org/work/963http://syriaca.org/work/2"/> -->
+                                            <xsl:attribute name="passive" select="normalize-space($tokenized-relation-uris)"/>
                                         </xsl:otherwise>
                                     </xsl:choose>
-                                </xsl:element>
-                            </xsl:otherwise>
-                        </xsl:choose>
+                                </xsl:when>
+                                
+                                <!-- if the column does not meet the above tests for special processing, the column contents are put directly into the element -->
+                                <xsl:otherwise>
+                                    <xsl:copy-of select="$column-contents"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:element>
                     </xsl:if>
                 </xsl:for-each>
             </xsl:if>
@@ -1291,13 +1152,6 @@
                                             </xsl:for-each>                                            
                                         </xsl:if>
                                     </xsl:for-each>
-                                    <xsl:if test="matches(name(),'Edition_|Translation_|Version_|Ms_')">
-                                        <xsl:element name="relation">
-                                            <xsl:attribute name="active" select="concat('#',$bib-id)"/>
-                                            <xsl:attribute name="ref" select="'lawd:embodies'"/>
-                                            <xsl:attribute name="passive" select="concat('http://syriaca.org/work/',$record-id)"/>
-                                        </xsl:element>
-                                    </xsl:if>
                                 </listRelation>
                             </xsl:if>
                             
