@@ -607,7 +607,7 @@
                     
                     <!-- CONTRIBUTORS -->
                     <respStmt>
-                        <resp>This keyword list adapts and expands one developed for the Comprehensive Bibilography of Syriac Christianity by</resp>
+                        <resp>This keyword list adapts and expands one developed for the Comprehensive Bibliography of Syriac Christianity by</resp>
                         <name ref="http://syriaca.org/documentation/editors.xml#sminov">Sergey Minov</name>
                     </respStmt>
                     <respStmt>
