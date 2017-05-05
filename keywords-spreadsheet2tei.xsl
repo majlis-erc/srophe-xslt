@@ -594,24 +594,29 @@
                     <funder>The International Balzan Prize Foundation</funder>
                     <funder>The National Endowment for the Humanities</funder>
                     <principal>David A. Michelson</principal>
+                   
 
                     <!-- EDITORS -->
-                    <editor role="general" ref="http://syriaca.org/documentation/editors.xml#ngibson">Nathan P. Gibson</editor>
-                    <editor role="general" ref="http://syriaca.org/documentation/editors.xml#dmichelson">David A. Michelson</editor>
+                    <editor role="general" ref="http://syriaca.org/documentation/editors.xml#sminov">Sergey Minov</editor>
+                    <editor role="general" ref="http://syriaca.org/documentation/editors.xml#dschwartz">Daniel L. Schwartz</editor>
                     
                     <!-- CREATOR -->
                     <!-- designates the editor responsible for creating this keyword record (may be different from the file creator) -->
-                    <editor role="creator" ref="http://syriaca.org/documentation/editors.xml#ngibson">Nathan P. Gibson</editor>
-                    <editor role="creator" ref="http://syriaca.org/documentation/editors.xml#dmichelson">David A. Michelson</editor>
+                    <editor role="creator" ref="http://syriaca.org/documentation/editors.xml#sminov">Sergey Minov</editor>
+                    <editor role="creator" ref="http://syriaca.org/documentation/editors.xml#dschwartz">Daniel L. Schwartz</editor>
                     
                     <!-- CONTRIBUTORS -->
                     <respStmt>
-                        <resp>Editing, data entry, and reconciling by</resp>
-                        <name ref="http://syriaca.org/documentation/editors.xml#ngibson">Nathan P. Gibson</name>
+                        <resp>This keyword list adapts and expands one developed for the Comprehensive Bibilography of Syriac Christianity by</resp>
+                        <name ref="http://syriaca.org/documentation/editors.xml#sminov">Sergey Minov</name>
                     </respStmt>
                     <respStmt>
-                        <resp>Editing, proofreading, data architecture, and encoding by</resp>
-                        <name type="person" ref="http://syriaca.org/documentation/editors.xml#dmichelson">David A. Michelson</name>
+                        <resp>Adaptation, expansion, and organization of the Comprehensive Bibliography of Syriac Christianity keyword list by</resp>
+                        <name type="person" ref="http://syriaca.org/documentation/editors.xml#dschwartz">Daniel L. Schwartz</name>
+                    </respStmt>
+                    <respStmt>
+                        <resp>XSLT transform of spreadsheet data into TEI by</resp>
+                        <name type="person" ref="http://syriaca.org/documentation/editors.xml#ngibson">Nathan Gibson</name>
                     </respStmt>
                 </titleStmt>
                 <editionStmt>
@@ -650,23 +655,19 @@
 
                 <!-- SERIES STATEMENTS -->
                 <seriesStmt>
-                    <title level="s">New Handbook of Syriac Literature</title>
-                    <editor role="general" ref="http://syriaca.org/documentation/editors.xml#ngibson">Nathan P. Gibson</editor>
-                    <editor role="general" ref="http://syriaca.org/documentation/editors.xml#dmichelson">David A. Michelson</editor>
+                    <title level="s">A Taxonomy of Syriac Studies</title>
+                    <editor role="general" ref="http://syriaca.org/documentation/editors.xml#sminov">Sergey Minov</editor>
+                    <editor role="general" ref="http://syriaca.org/documentation/editors.xml#dschwartz">Daniel L. Schwartz</editor>
                     <respStmt>
                         <resp>Edited by</resp>
-                        <name type="person" ref="http://syriaca.org/documentation/editors.xml#ngibson">Nathan P. Gibson</name>
+                        <name type="person" ref="http://syriaca.org/documentation/editors.xml#sminov">Sergey Minov</name>
                     </respStmt>
                     <respStmt>
                         <resp>Edited by</resp>
-                        <name type="person" ref="http://syriaca.org/documentation/editors.xml#dmichelson">David A. Michelson</name>
+                        <name type="person" ref="http://syriaca.org/documentation/editors.xml#dschwartz">Daniel L. Schwartz</name>
                     </respStmt>
-                    <idno type="URI">http://syriaca.org/nhsl</idno>
-                    <!-- One or more volumes containing this record can go here. --> 
-                    <biblScope unit="vol" from="2" to="2">
-                        <title level="m">A Guide to the Bible in Syriac</title>
-                        <idno type="URI">http://syriaca.org/bible</idno>
-                    </biblScope>
+                    <idno type="URI">http://syriaca.org/taxonomy</idno>
+                    
                 </seriesStmt>                
                 <sourceDesc>
                     <p>Born digital.</p>
@@ -715,7 +716,9 @@
                     <language ident="ar">Arabic</language>
                     <language ident="fr">French</language>
                     <language ident="de">German</language>
+                    <language ident="gr">Greek</language>
                     <language ident="la">Latin</language>
+                    <language ident="ru">Russian</language>
                 </langUsage>
             </profileDesc>
             <revisionDesc status="draft">
