@@ -417,7 +417,7 @@
             </xsl:variable>
 
             <!-- creates the URI from the record ID -->
-            <xsl:variable name="record-uri" select="concat('http://syriaca.org/subject/',New_URI)"/>
+            <xsl:variable name="record-uri" select="concat('http://syriaca.org/keyword/',New_URI)"/>
 
             <!-- creates bibls for this record (row) using the @sourceUriColumn attributes defined in $column-mapping -->
             <xsl:variable name="record-bibls">
@@ -624,7 +624,7 @@
                 </editionStmt>
                 <publicationStmt>
                     <authority>Syriaca.org: The Syriac Reference Portal</authority>
-                    <idno type="URI">http://syriaca.org/subject/<xsl:value-of select="$record-id"
+                    <idno type="URI">http://syriaca.org/keyword/<xsl:value-of select="$record-id"
                         />/tei</idno>
                     <xsl:element name="availability">
                         <licence target="http://creativecommons.org/licenses/by/3.0/">
@@ -842,7 +842,7 @@
                                         <xsl:for-each select="tokenize($column-contents,',')">
                                             <!-- makes a partial URI into a full URI -->
                                             <xsl:if test="not(contains(.,'http'))"
-                                                >http://syriaca.org/subject/</xsl:if>
+                                                >http://syriaca.org/keyword/</xsl:if>
                                             <xsl:value-of select="concat(.,' ')"/>
                                         </xsl:for-each>
                                     </xsl:variable>
