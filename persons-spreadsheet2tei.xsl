@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="xs" version="2.0"
@@ -133,10 +132,20 @@
                         <xsl:when test="matches(name(),'^[a-zA-Z]*_attestation')">
                             <xsl:attribute name="type" select="'attestation'"/>
                         </xsl:when>
+                        <xsl:when test="matches(name(),'^[a-zA-Z]*_relation')">
+                            <xsl:attribute name="type" select="'relation'"/>
+                        </xsl:when>
                         <xsl:when test="starts-with(name(),'idno_')">
                             <xsl:attribute name="type" select="substring-after(name(),'idno_')"/>
                         </xsl:when>
                     </xsl:choose>
+                    <!-- adds relation name, using as a value the text in the column name immediately after the element name ("relation_"). 
+                    Triple hyphens are turned into colons (:) to allow prefixed namespaces. -->
+                    <xsl:if test="matches(name(), '^relation_[a-zA-Z\-]+')">
+                        <xsl:attribute name="ref"
+                            select="replace(replace(replace(name(), 'relation_', ''), '\..*$', ''), '\-\-\-', ':')"
+                        />
+                    </xsl:if>
                     <xsl:attribute name="column" select="name()"/>
                     <!-- adds @unit, based on the part of the column name immediately after the element name. -->
                     <!-- ??? does not yet support @target -->
@@ -189,12 +198,6 @@
                         </xsl:if>
                     </xsl:if>
 
-                    <!-- adds relation name, using as a value the text in the column name immediately after the element name ("relation_"). -->
-                    <xsl:if test="matches(name(),'^relation_[a-zA-Z\-]+')">
-                        <xsl:attribute name="name"
-                            select="replace(replace(name(),'relation_',''),'\..*$','')"/>
-                    </xsl:if>
-
                     <xsl:attribute name="column" select="name()"/>
                     <!-- adds syriaca-headword -->
                     <xsl:choose>
@@ -203,6 +206,9 @@
                         </xsl:when>
                         <xsl:when test="matches(name(),'^[a-zA-Z]*_anonymous-description')">
                             <xsl:attribute name="syriaca-tags" select="'#anonymous-description'"/>
+                        </xsl:when>
+                        <xsl:when test="matches(name(),'^[a-zA-Z]*_ektobe-headword')">
+                            <xsl:attribute name="syriaca-tags" select="'#ektobe-headword'"/>
                         </xsl:when>
                     </xsl:choose>
                     <!-- adds sourceUriColumn -->
@@ -250,7 +256,7 @@
     <!-- specifies where the output TEI files should go -->
     <!-- !!! Change this to where you want the output files to be placed relative to the XML file being converted. 
         This should end with a trailing slash (/).-->
-    <xsl:variable name="directory">../../working-files/spear20160812/</xsl:variable>
+    <xsl:variable name="directory">sample-files/</xsl:variable>
 
     <!-- CUSTOM FUNCTIONS -->
     <!-- used in auto column-mapping to determine the element name and attributes that should be created for that column. 
@@ -690,21 +696,37 @@
 
                     <!-- CREATOR -->
                     <!-- designates the editor responsible for creating this person record (may be different from the file creator) -->
-                    <editor role="creator" ref="http://syriaca.org/documentation/editors.xml#dschwartz">Daniel L.
-                        Schwartz</editor>
+                    <editor role="creator" ref="http://syriaca.org/documentation/editors.xml#abinggeli">André Binggeli</editor>
+                    <editor role="creator" ref="http://syriaca.org/documentation/editors.xml#fbriquelchatonnet">Françoise Briquel-Chatonnet</editor>
+                    <editor role="creator" ref="http://syriaca.org/documentation/editors.xml#mdebie">Muriel Debié</editor>
+                    <editor role="creator" ref="http://syriaca.org/documentation/editors.xml#adesreumaux">Alain Desreumaux</editor>
+                    <editor role="creator" ref="http://syriaca.org/documentation/editors.xml#evilley">Emilie Villey</editor>
+                    <editor role="creator" ref="http://syriaca.org/documentation/editors.xml#ydergham">Youssef Dergham</editor>
+                    <editor role="creator" ref="http://syriaca.org/documentation/editors.xml#mfarina">Margherita Farina</editor>
+                    <editor role="creator" ref="http://syriaca.org/documentation/editors.xml#spratelli">Simone I. M. Pratelli</editor>
+                    <editor role="creator" ref="http://syriaca.org/documentation/editors.xml#fruani">Flavia Ruani</editor>
+                    <editor role="creator" ref="http://syriaca.org/documentation/editors.xml#eserra">Eleonora Serra</editor>
 
                     <!-- CONTRIBUTORS -->
                     <respStmt>
-                        <resp>Editing, proofreading, data entry and revision by</resp>
-                        <name type="person" ref="http://syriaca.org/documentation/editors.xml#dschwartz">Daniel L. Schwartz</name>
+                        <resp>These names were received as a dataset from E-Ktobe : manuscrits syriaques 
+                            (<ref target="http://syriac.msscatalog.org/">http://syriac.msscatalog.org/</ref>). 
+                            Née sur l’initiative d'André Binggeli (IRHT-CNRS), Françoise Briquel-Chatonnet (Orient et Méditerranée-CNRS), 
+                            Muriel Debié (EPHE) et Alain Desreumaux (Orient et Méditerranée-CNRS) dans le cadre du programme 
+                            SYRAB de l'ANR (Agence Nationale de la Recherche), la base e-ktobe est actuellement placée sous la responsabilité 
+                            scientifique d’André Binggeli et Emilie Villey (Orient et Méditerranée-CNRS).                            
+                            Liste des collaborateurs contribuant ou ayant contribué à l’alimentation de la base : 
+                            Youssef Dergham (Bibliothèque du patriarcat syro-catholique de Charfet), Margherita Farina (CNRS, Paris), 
+                            Simone I. M. Pratelli (U. de Constance), Flavia Ruani (U. de Gand) et Eleonora Serra (U. de Pise).</resp>
+                        <orgName ref="http://syriac.msscatalog.org/">E-Ktobe : manuscrits syriaques</orgName>
+                    </respStmt>
+                    <respStmt>
+                        <resp>Conversion to TEI-XML by</resp>
+                        <name type="person" ref="http://syriaca.org/documentation/editors.xml#ngibson">Nathan P. Gibson</name>
                     </respStmt>
                     <respStmt>
                         <resp>Data architecture by</resp>
                         <name type="person" ref="http://syriaca.org/documentation/editors.xml#dmichelson">David A. Michelson</name>
-                    </respStmt>
-                    <respStmt>
-                        <resp>Data conversion by</resp>
-                        <name ref="http://syriaca.org/documentation/editors.xml#ngibson">Nathan P. Gibson</name>
                     </respStmt>
                 </titleStmt>
                 <editionStmt>
@@ -748,14 +770,13 @@
                         ref="http://syriaca.org/documentation/editors.xml#dmichelson">David A.
                         Michelson</editor>
                     <editor role="associate"
-                        ref="http://syriaca.org/documentation/editors.xml#tcarlson">Thomas A.
-                        Carlson</editor>
+                        ref="http://syriaca.org/documentation/editors.xml#jnsaint-laurent"
+                        >Jeanne-Nicole Mellon Saint-Laurent</editor>
                     <editor role="associate"
                         ref="http://syriaca.org/documentation/editors.xml#ngibson">Nathan P.
                         Gibson</editor>
-                    <editor role="associate"
-                        ref="http://syriaca.org/documentation/editors.xml#jnsaint-laurent"
-                        >Jeanne-Nicole Mellon Saint-Laurent</editor>
+                    <editor role="associate" ref="http://syriaca.org/documentation/editors.xml#dschwartz">Daniel L.
+                        Schwartz</editor>
                     <respStmt>
                         <resp>Edited by</resp>
                         <name type="person"
@@ -765,8 +786,8 @@
                     <respStmt>
                         <resp>Edited by</resp>
                         <name type="person"
-                            ref="http://syriaca.org/documentation/editors.xml#tcarlson">Thomas A.
-                            Carlson</name>
+                            ref="http://syriaca.org/documentation/editors.xml#jnsaint-laurent"
+                            >Jeanne-Nicole Mellon Saint-Laurent</name>
                     </respStmt>
                     <respStmt>
                         <resp>Edited by</resp>
@@ -777,8 +798,8 @@
                     <respStmt>
                         <resp>Edited by</resp>
                         <name type="person"
-                            ref="http://syriaca.org/documentation/editors.xml#jnsaint-laurent"
-                            >Jeanne-Nicole Mellon Saint-Laurent</name>
+                            ref="http://syriaca.org/documentation/editors.xml#dschwartz">Daniel L.
+                            Schwartz</name>
                     </respStmt>
                     <idno type="URI">http://syriaca.org/persons</idno>
                     <!-- selects which vol. of SBD this record is contained in, depending on whether the person is a saint and/or author. 
@@ -860,6 +881,9 @@
                         <category xml:id="syriaca-anglicized">
                             <catDesc>An anglicized version of a name, included to facilitate
                                 searching.</catDesc>
+                        </category>
+                        <category xml:id="ektobe-headword">
+                            <catDesc>The name used by e-Ktobe as a standardized name form.</catDesc>
                         </category>
                     </taxonomy>
                     <taxonomy>
@@ -1022,40 +1046,55 @@
                                             </xsl:element>
                                         </xsl:when>
                                         <!-- processes relation elements -->
-                                        <xsl:when test="name()='relation'">
+                                        <xsl:when test="name() = 'relation'">
                                             <!-- processes multiple comma-separated relation uris -->
                                             <!-- ??? Need to sanitize possible spaces between uris using normalize-space()? -->
                                             <xsl:variable name="tokenized-relation-uris">
-                                                <xsl:for-each select="tokenize($column-contents,',')">
+                                                <xsl:for-each
+                                                    select="tokenize($column-contents, ',')">
                                                     <!-- makes a partial URI into a full URI -->
-                                                    <xsl:if test="not(contains(.,'http'))"
-                                                        >http://syriaca.org/person/</xsl:if>
-                                                    <xsl:value-of select="concat(.,' ')"/>
+                                                    <xsl:if test="not(contains(., 'http'))"
+                                                        >http://syriaca.org/work/</xsl:if>
+                                                    <xsl:value-of select="concat(., ' ')"/>
                                                 </xsl:for-each>
                                             </xsl:variable>
                                             <xsl:choose>
                                                 <!-- adds possibly identical relation -->
                                                 <!-- !!! You can define more relation types here (and in $column-mapping) -->
-                                                <xsl:when test="@name='possibly-identical'">
+                                                <xsl:when test="@ref = 'syriaca:possiblyIdentical'">
                                                     <xsl:attribute name="mutual"
-                                                        select="concat($record-uri,' ',normalize-space($tokenized-relation-uris))"/>
-                                                    <desc xml:lang="en">This person is possibly identical
-                                                        with one or more persons represented in another
-                                                        record</desc>
+                                                        select="concat($record-uri, ' ', normalize-space($tokenized-relation-uris))"/>
+                                                    <desc xml:lang="en">This person is possibly
+                                                        identical with one or more persons represented in
+                                                        another record</desc>
                                                 </xsl:when>
-                                                <xsl:when test="@name='different-from'">
+                                                <xsl:when test="@ref = 'syriaca:differentFrom'">
                                                     <xsl:attribute name="mutual"
-                                                        select="concat($record-uri,' ',normalize-space($tokenized-relation-uris))"/>
-                                                    <desc xml:lang="en">The following persons are not identical but have been or could be confused: 
-                                                        <xsl:value-of select="string-join(($record-uri,string-join(normalize-space($tokenized-relation-uris),', ')),', ')"/></desc>
+                                                        select="concat($record-uri, ' ', normalize-space($tokenized-relation-uris))"/>
+                                                    <desc xml:lang="en">The following persons are not
+                                                        identical but have been or could be confused:
+                                                        <xsl:value-of
+                                                            select="string-join(($record-uri, string-join(normalize-space($tokenized-relation-uris), ', ')), ', ')"
+                                                        /></desc>
                                                 </xsl:when>
-                                                <xsl:when test="@name='has-relation-to-place'">
-                                                    <xsl:attribute name="active"
-                                                        select="$record-uri"/>
+                                                <xsl:when test="@ref = 'syriaca:hasRelationToPlace'">
+                                                    <xsl:attribute name="active" select="$record-uri"/>
                                                     <xsl:attribute name="passive"
                                                         select="normalize-space($tokenized-relation-uris)"/>
-                                                    <desc xml:lang="en">This person has an unspecified connection to places.</desc>
+                                                    <desc xml:lang="en">This person has an unspecified
+                                                        connection to places.</desc>
                                                 </xsl:when>
+                                                <xsl:otherwise>
+                                                    <xsl:attribute name="active" select="$record-uri"/>
+                                                    <!-- ??? Something here seems to be causing a bug that garbles the passive URI if the record ID is contained in it. 
+                                                    E.g., if the relation should be 
+                                                        <relation ref="skos:broadMatch" active="http://syriaca.org/work/2" passive="http://syriaca.org/work/9632"/> 
+                                                    it is instead 
+                                                       <relation ref="skos:broadMatch" active="http://syriaca.org/work/2" passive="http://syriaca.org/work/963http://syriaca.org/work/2"/> -->
+                                                    <xsl:attribute name="passive"
+                                                        select="normalize-space($tokenized-relation-uris)"
+                                                    />
+                                                </xsl:otherwise>
                                             </xsl:choose>
                                         </xsl:when>
                                         <!-- creates <sex> and puts the column contents into the @value -->
