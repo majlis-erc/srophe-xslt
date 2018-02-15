@@ -3,7 +3,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="xs" version="2.0"
     xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:syriaca="http://syriaca.org"
-    xmlns:lawd="http://lawd.info/ontology/" xmlns:dct="http://purl.org/dc/terms/"
+    xmlns:lawd="http://lawd.info/ontology/" xmlns:dcterms="http://purl.org/dc/terms/"
     xmlns:saxon="http://saxon.sf.net/" xmlns:functx="http://www.functx.com">
 
     <!-- FORMAT OF COMMENTS -->
@@ -715,33 +715,18 @@
 
                     <!-- EDITORS -->
                     <editor role="general"
-                        ref="http://syriaca.org/documentation/editors.xml#gkessel">Grigory
-                        Kessel</editor>
-                    <editor role="general"
-                        ref="http://syriaca.org/documentation/editors.xml#nbamballi">Nicolás
-                        Bamballi</editor>
+                        ref="http://syriaca.org/documentation/editors.xml#dschwartz">Daniel L. Schwartz</editor>
 
                     <!-- CREATOR -->
                     <!-- designates the editor responsible for creating this work record (may be different from the file creator) -->
                     <editor role="creator"
-                        ref="http://syriaca.org/documentation/editors.xml#gkessel">Grigory
-                        Kessel</editor>
-                    <editor role="creator"
-                        ref="http://syriaca.org/documentation/editors.xml#nbamballi">Nicolás
-                        Bamballi</editor>
+                        ref="http://syriaca.org/documentation/editors.xml#dschwartz">Daniel L. Schwartz</editor>
 
                     <!-- CONTRIBUTORS -->
                     <respStmt>
                         <resp>Editing and data entry by</resp>
                         <name type="person"
-                            ref="http://syriaca.org/documentation/editors.xml#nbamballi">Nicolás
-                            Bamballi</name>
-                    </respStmt>
-                    <respStmt>
-                        <resp>Editing and data entry by</resp>
-                        <name type="person"
-                            ref="http://syriaca.org/documentation/editors.xml#gkessel">Grigory
-                            Kessel</name>
+                            ref="http://syriaca.org/documentation/editors.xml#dschwartz">Daniel L. Schwartz</name>
                     </respStmt>
                     <respStmt>
                         <resp>Editing, proofreading, data architecture, and encoding by</resp>
@@ -813,10 +798,10 @@
                     </respStmt>
                     <idno type="URI">http://syriaca.org/nhsl</idno>
                     <!-- One or more volumes containing this record can go here. -->
-                    <biblScope unit="vol" from="2" to="2">
+                    <!--<biblScope unit="vol" from="2" to="2">
                         <title level="m">Syriac Scientific and Philosophical Literature</title>
                         <idno type="URI">http://syriaca.org/sci-phil</idno>
-                    </biblScope>
+                    </biblScope>-->
                 </seriesStmt>
                 <sourceDesc>
                     <p>Born digital.</p>
@@ -1063,6 +1048,15 @@
                                                   select="normalize-space($tokenized-relation-uris)"/>
                                                   <desc xml:lang="en">This work has an unspecified
                                                   connection to places.</desc>
+                                                </xsl:when>
+                                                <xsl:when test="@ref = 'dcterms:isPartOf'">
+                                                    <xsl:attribute name="active" select="$record-uri"/>
+                                                    <xsl:attribute name="passive"
+                                                        select="replace(normalize-space(string-join($tokenized-relation-uris,' ')),'\[.*?\]\s*$','')"/>
+                                                    <xsl:for-each select="$tokenized-relation-uris">
+                                                        <xsl:variable name="part-number" select="replace(normalize-space(.),'http.*?\[(.*?)\]\s*$','$1')"/>
+                                                        <desc><label type="order" subtype="part" n="{$part-number}">part <xsl:value-of select="$part-number"/></label></desc>
+                                                    </xsl:for-each>
                                                 </xsl:when>
                                                 <xsl:otherwise>
                                                   <xsl:attribute name="active" select="$record-uri"/>
@@ -1451,7 +1445,7 @@
                                         <xsl:element name="relation">
                                             <xsl:attribute name="active"
                                                 select="concat('#', $bib-id)"/>
-                                            <xsl:attribute name="ref" select="'dct:source'"/>
+                                            <xsl:attribute name="ref" select="'dcterms:source'"/>
                                             <xsl:attribute name="passive" select="$witness-bib-ids"/>
                                             <xsl:if test="string-length($witnesses-source-bib-id)">
                                                 <xsl:attribute name="source"
