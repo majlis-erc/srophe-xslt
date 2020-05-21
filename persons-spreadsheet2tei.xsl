@@ -476,7 +476,7 @@
             </xsl:variable>
 
             <!-- creates the URI from the record ID -->
-            <xsl:variable name="record-uri" select="concat('http://syriaca.org/person/',New_URI)"/>
+            <xsl:variable name="record-uri" select="concat('https://usaybia.net/person/',New_URI)"/>
 
             <!-- creates bibls for this record (row) using the @sourceUriColumn attributes defined in $column-mapping -->
             <xsl:variable name="record-bibls">
@@ -734,7 +734,7 @@
                 </editionStmt>
                 <publicationStmt>
                     <authority>Syriaca.org: The Syriac Reference Portal</authority>
-                    <idno type="URI">http://syriaca.org/person/<xsl:value-of select="$record-id"
+                    <idno type="URI">https://usaybia.net/person/<xsl:value-of select="$record-id"
                         />/tei</idno>
                     <availability>
                         <licence target="http://creativecommons.org/licenses/by/3.0/">
@@ -801,7 +801,7 @@
                             ref="http://syriaca.org/documentation/editors.xml#dschwartz">Daniel L.
                             Schwartz</name>
                     </respStmt>
-                    <idno type="URI">http://syriaca.org/persons</idno>
+                    <idno type="URI">http://usaybia.net/persons</idno>
                     <!-- selects which vol. of SBD this record is contained in, depending on whether the person is a saint and/or author. 
                         Vol. 1 for saints, vol. 2 for authors, vol. 3 for neither. -->
                     <xsl:if test="$is-saint">
@@ -955,7 +955,7 @@
                         select="$columns-to-convert[name()=$this-column/@sourceUriColumn][1]"/>
                     <!-- turns that bibl URI number into a complete Syriaca.org URI -->
                     <xsl:variable name="column-uri"
-                        select="concat('http://syriaca.org/bibl/',$this-column-source)"/>
+                        select="concat('https://usaybia.net/bibl/',$this-column-source)"/>
                     <!-- gets the name/position of the spreadsheet column that contains the citedRange data for this cell (using the source column name) -->
                     <xsl:variable name="cited-range"
                         select="$column-mapping/citedRange[@sourceUriColumn=name($this-column-source)]/@column"/>
@@ -983,7 +983,7 @@
                                 <xsl:variable name="attestation-URIs" select="tokenize($column-contents,'\s*,\s*')"/>
                                 <xsl:variable name="en-headword" select="normalize-space($columns-to-convert[matches(name(.),'.*syriaca\-headword.*\.en.*') and .!=''][1])"/>
                                 <xsl:for-each select="$attestation-URIs">
-                                    <xsl:variable name="attesting-work-url" select="concat(replace(.,'http://syriaca.org','http://wwwb.library.vanderbilt.edu'),'/tei')"/>
+                                    <xsl:variable name="attesting-work-url" select="concat(replace(.,'https://usaybia.net','http://wwwb.library.vanderbilt.edu'),'/tei')"/>
                                     <xsl:variable name="attesting-work-title">
                                         <xsl:copy-of
                                             select="document($attesting-work-url)/TEI/text/body/bibl/title[contains(@syriaca-tags,'#syriaca-headword') and starts-with(@xml:lang,'en')]"
@@ -1054,7 +1054,7 @@
                                                     select="tokenize($column-contents, ',')">
                                                     <!-- makes a partial URI into a full URI -->
                                                     <xsl:if test="not(contains(., 'http'))"
-                                                        >http://syriaca.org/work/</xsl:if>
+                                                        >https://usaybia.net/work/</xsl:if>
                                                     <xsl:value-of select="concat(., ' ')"/>
                                                 </xsl:for-each>
                                             </xsl:variable>
@@ -1164,7 +1164,7 @@
                                 select="document($bibl-url)/TEI/teiHeader/fileDesc/titleStmt/title"
                                 xpath-default-namespace="http://www.tei-c.org/ns/1.0"/>
                             <!-- adds a pointer with this bibl's URI -->
-                            <ptr target="{concat('http://syriaca.org/bibl/',.)}"/>
+                            <ptr target="{concat('https://usaybia.net/bibl/',.)}"/>
                             <!-- cycles through citedRange(s) and adds to bibl. This accepts multiple citedRanges for the same bibl (e.g., both page and section numbers), 
                                 if they exist. -->
                             <xsl:for-each select="$cited-ranges">
