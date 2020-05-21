@@ -3,7 +3,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="xs" version="2.0"
     xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:syriaca="http://syriaca.org"
-    xmlns:lawd="http://lawd.info/ontology/" xmlns:dct="http://purl.org/dc/terms/"
+    xmlns:lawd="http://lawd.info/ontology/" xmlns:dcterms="http://purl.org/dc/terms/"
     xmlns:saxon="http://saxon.sf.net/" xmlns:functx="http://www.functx.com">
 
     <!-- FORMAT OF COMMENTS -->
@@ -99,6 +99,9 @@
                         </xsl:when>
                         <xsl:when test="matches(name(), '^[a-zA-Z]*_explicit')">
                             <xsl:attribute name="type" select="'explicit'"/>
+                        </xsl:when>
+                        <xsl:when test="matches(name(), '^[a-zA-Z]*_excerpt')">
+                            <xsl:attribute name="type" select="'excerpt'"/>
                         </xsl:when>
                         <xsl:when test="matches(name(), '^[a-zA-Z]*_prologue')">
                             <xsl:attribute name="type" select="'prologue'"/>
@@ -227,7 +230,7 @@
 
                     <!-- grabs the part of the column name that contains the source column name -->
                     <xsl:variable name="source-name"
-                        select="$tokenized-column-name[last() and matches(., '^(Source|Edition|Translation|Version|Glossary|Apparatus|PrintCatalogue|DigitalCatalogue|Ms|OriginalWithSyriacEvidence)_[0-9]+')]"/>
+                        select="$tokenized-column-name[last() and matches(., '^(Source|Edition|Translation|Version|Glossary|Apparatus|PrintCatalogue|DigitalCatalogue|Ms|OriginalWithSyriacEvidence|Literature|ReferenceWork)_[0-9]+')]"/>
 
                     <xsl:if test="string-length($source-name)">
                         <xsl:attribute name="sourceUriColumn" select="$source-name"/>
@@ -266,7 +269,7 @@
         <xsl:param name="column-name" as="xs:string"/>
         <!-- separates the column name into its relevant parts -->
         <xsl:analyze-string select="$column-name"
-            regex="^([a-zA-Z0-9\-]+)(_([a-zA-Z0-9\-]+))?(\.((Source|Edition|Translation|Version|Glossary|Apparatus|PrintCatalogue|DigitalCatalogue|Ms|OriginalWithSyriacEvidence)_[0-9]+))?(\.([a-zA-Z0-9\-]+))?$">
+            regex="^([a-zA-Z0-9\-]+)(_([a-zA-Z0-9\-]+))?(\.((Source|Edition|Translation|Version|Glossary|Apparatus|PrintCatalogue|DigitalCatalogue|Ms|OriginalWithSyriacEvidence|Literature|ReferenceWork)_[0-9]+))?(\.([a-zA-Z0-9\-]+))?$">
             <xsl:matching-substring>
                 <elementName>
                     <xsl:value-of select="regex-group(1)"/>
@@ -715,33 +718,18 @@
 
                     <!-- EDITORS -->
                     <editor role="general"
-                        ref="http://syriaca.org/documentation/editors.xml#gkessel">Grigory
-                        Kessel</editor>
-                    <editor role="general"
-                        ref="http://syriaca.org/documentation/editors.xml#nbamballi">Nicolás
-                        Bamballi</editor>
+                        ref="http://syriaca.org/documentation/editors.xml#jwalters">James E. Walters</editor>
 
                     <!-- CREATOR -->
                     <!-- designates the editor responsible for creating this work record (may be different from the file creator) -->
                     <editor role="creator"
-                        ref="http://syriaca.org/documentation/editors.xml#gkessel">Grigory
-                        Kessel</editor>
-                    <editor role="creator"
-                        ref="http://syriaca.org/documentation/editors.xml#nbamballi">Nicolás
-                        Bamballi</editor>
+                        ref="http://syriaca.org/documentation/editors.xml#jwalters">James E. Walters</editor>
 
                     <!-- CONTRIBUTORS -->
                     <respStmt>
                         <resp>Editing and data entry by</resp>
                         <name type="person"
-                            ref="http://syriaca.org/documentation/editors.xml#nbamballi">Nicolás
-                            Bamballi</name>
-                    </respStmt>
-                    <respStmt>
-                        <resp>Editing and data entry by</resp>
-                        <name type="person"
-                            ref="http://syriaca.org/documentation/editors.xml#gkessel">Grigory
-                            Kessel</name>
+                            ref="http://syriaca.org/documentation/editors.xml#jwalters">James E. Walters</name>
                     </respStmt>
                     <respStmt>
                         <resp>Editing, proofreading, data architecture, and encoding by</resp>
@@ -750,7 +738,7 @@
                             Gibson</name>
                     </respStmt>
                     <respStmt>
-                        <resp>Editing, proofreading, data architecture, and encoding by</resp>
+                        <resp>Data architecture by</resp>
                         <name type="person"
                             ref="http://syriaca.org/documentation/editors.xml#dmichelson">David A.
                             Michelson</name>
@@ -813,10 +801,10 @@
                     </respStmt>
                     <idno type="URI">http://syriaca.org/nhsl</idno>
                     <!-- One or more volumes containing this record can go here. -->
-                    <biblScope unit="vol" from="2" to="2">
+                    <!--<biblScope unit="vol" from="2" to="2">
                         <title level="m">Syriac Scientific and Philosophical Literature</title>
                         <idno type="URI">http://syriaca.org/sci-phil</idno>
-                    </biblScope>
+                    </biblScope>-->
                 </seriesStmt>
                 <sourceDesc>
                     <p>Born digital.</p>
@@ -954,7 +942,7 @@
                                     <!-- can replace this with localhost if there is error on dev server. Must have local exist running. -->
                                     <!--<xsl:variable name="attesting-work-url" select="concat(replace(.,'http://syriaca.org','http://wwwb.library.vanderbilt.edu'),'/tei')"/>-->
                                     <xsl:variable name="attesting-work-url"
-                                        select="concat(replace(., 'http://syriaca.org/work/', 'http://wwwb.library.vanderbilt.edu/exist/apps/srophe/work/'), '/tei')"/>
+                                        select="concat(replace(., 'http://syriaca.org/work/', 'http://localhost:8080/exist/apps/srophe/work/'), '/tei')"/>
                                     <xsl:variable name="attesting-work-title">
                                         <xsl:copy-of
                                             select="document($attesting-work-url)/TEI/text/body/bibl/title[contains(@syriaca-tags, '#syriaca-headword') and starts-with(@xml:lang, 'en')]"
@@ -1064,6 +1052,18 @@
                                                   <desc xml:lang="en">This work has an unspecified
                                                   connection to places.</desc>
                                                 </xsl:when>
+                                                <xsl:when test="@ref = 'dcterms:isPartOf'">
+                                                    <xsl:variable name="containing-works" select="normalize-space($tokenized-relation-uris)"/>
+                                                    <xsl:for-each select="$containing-works">
+                                                        <xsl:variable name="order" select="replace(replace(.,'.*\{',''),'\}\s*','')"/>
+                                                        <xsl:attribute name="active" select="$record-uri"/>
+                                                        <xsl:attribute name="passive" select="replace(.,'\s*\{\d+\}\s*','')"/>                                                        
+                                                        <xsl:attribute name="type" select="'part'"/>
+                                                        <desc>
+                                                            <label type="order" subtype="part" n="{$order}">part <xsl:value-of select="$order"/></label>
+                                                        </desc>
+                                                    </xsl:for-each>
+                                                </xsl:when>
                                                 <xsl:otherwise>
                                                   <xsl:attribute name="active" select="$record-uri"/>
                                                   <!-- ??? Something here seems to be causing a bug that garbles the passive URI if the record ID is contained in it. 
@@ -1092,7 +1092,7 @@
                                         <xsl:when test="name() = 'author' or name() = 'editor'">
                                             <!-- uses draft version. If you want the production/published version, change the variable below. -->
                                             <xsl:variable name="author-ref-url"
-                                                select="replace($author-ref, 'syriaca.org', 'wwwb.library.vanderbilt.edu')"/>
+                                                select="replace($author-ref, 'syriaca.org', 'localhost:8080/exist/apps/srophe/')"/>
                                             <xsl:variable name="ref-persName">
                                                 <xsl:copy-of
                                                   select="document(concat($author-ref-url, '/tei'))/TEI/text/body/listPerson/person/persName[contains(@syriaca-tags, '#syriaca-headword')]"
@@ -1133,12 +1133,12 @@
         <xsl:param name="this-row"/>
         <!-- creates a sequence of the column names of all the source columns used in the spreadsheet. -->
         <xsl:variable name="sources"
-            select="distinct-values(($this-row[matches(name(), '^(Source|Edition|Translation|Version|Glossary|Apparatus|PrintCatalogue|DigitalCatalogue|Ms|OriginalWithSyriacEvidence)_[0-9]*') and . != '']/name(), $column-mapping//@sourceUriColumn[. = $this-row[. != '']/name()]))"/>
+            select="distinct-values(($this-row[matches(name(), '^(Source|Edition|Translation|Version|Glossary|Apparatus|PrintCatalogue|DigitalCatalogue|Ms|OriginalWithSyriacEvidence|Literature|ReferenceWork)_[0-9]*') and . != '']/name(), $column-mapping//@sourceUriColumn[. = $this-row[. != '']/name()]))"/>
         <!-- creates a bibl for each of the source columns used in the spreadsheet. -->
         <xsl:variable name="sources-sorted">
             <xsl:for-each select="$sources">
                 <xsl:sort
-                    select="index-of(('Edition', 'Translation', 'Version', 'Ms', 'Source', 'Glossary', 'Apparatus', 'PrintCatalogue', 'DigitalCatalogue', 'OriginalWithSyriacEvidence'), replace(., '_[0-9]+', ''))"/>
+                    select="index-of(('Edition', 'Translation', 'Version', 'Ms', 'Source', 'Glossary', 'Apparatus', 'PrintCatalogue', 'DigitalCatalogue', 'OriginalWithSyriacEvidence', 'Literature', 'ReferenceWork'), replace(., '_[0-9]+', ''))"/>
                 <xsl:copy-of select="."/>
             </xsl:for-each>
         </xsl:variable>
@@ -1215,7 +1215,7 @@
                     <!-- can change this to localhost if there is problem with dev server-->
                     <!--<xsl:variable name="server-address" select="'http://wwwb.library.vanderbilt.edu/'"/>-->
                     <xsl:variable name="server-address"
-                        select="'http://wwwb.library.vanderbilt.edu/exist/apps/srophe/'"/>
+                        select="'http://localhost:8080/exist/apps/srophe/'"/>
                     <!-- creates the path to the bibl TEI using the URI number from the cell being processed -->
                     <xsl:variable name="bibl-uri-prefix"
                         select="concat('http://syriaca.org/', $bibl-uri-type, '/')"/>
@@ -1266,6 +1266,14 @@
                             <xsl:when test="matches(name(), 'OriginalWithSyriacEvidence_')">
                                 <xsl:attribute name="type"
                                     select="'syriaca:OriginalWithSyriacEvidence'"/>
+                            </xsl:when>
+                            <xsl:when test="matches(name(), 'Literature_')">
+                                <xsl:attribute name="type"
+                                    select="'syriaca:Literature'"/>
+                            </xsl:when>
+                            <xsl:when test="matches(name(), 'ReferenceWork_')">
+                                <xsl:attribute name="type"
+                                    select="'syriaca:ReferenceWork'"/>
                             </xsl:when>
                         </xsl:choose>
                         <!-- grabs the title of the remote bibl record and imports it here. -->
@@ -1451,7 +1459,7 @@
                                         <xsl:element name="relation">
                                             <xsl:attribute name="active"
                                                 select="concat('#', $bib-id)"/>
-                                            <xsl:attribute name="ref" select="'dct:source'"/>
+                                            <xsl:attribute name="ref" select="'dcterms:source'"/>
                                             <xsl:attribute name="passive" select="$witness-bib-ids"/>
                                             <xsl:if test="string-length($witnesses-source-bib-id)">
                                                 <xsl:attribute name="source"
