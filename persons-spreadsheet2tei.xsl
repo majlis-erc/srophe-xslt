@@ -33,7 +33,7 @@
                 * The spreadsheet must contain a column named "New_URI". This column should not be "mapped" below; it is hard-coded into the stylesheet.
                 * A person_ana column is also hard-coded into the stylesheet, but is not required. The values in this column determine what (if anything) goes into the person/@ana attribute,
                 and which series statements are used.
-                * Each record should have at least one column marked with syriaca-tags="#syriaca-headword", otherwise it will be placed into the "incomplete" folder.
+                * Each record should have at least one column marked with srophe-tags="#syriaca-headword", otherwise it will be placed into the "incomplete" folder.
                 * It's fine to map multiple spreadsheets below, as long as they don't contain columns with the same names but different attributes (e.g., @source or @xml:lang). 
                 * Columns for <sex> element will go into the @value. If they contain the abbreviations "M" or "F", then "male" or "female" will be inserted into the element content.
                 * The column-mapping template (see below) defines content of the <state> element as nested inside <desc> (needed for valid TEI) -->
@@ -205,13 +205,13 @@
                     <!-- adds syriaca-headword -->
                     <xsl:choose>
                         <xsl:when test="matches(name(),'^[a-zA-Z]*_syriaca-headword')">
-                            <xsl:attribute name="syriaca-tags" select="'#syriaca-headword'"/>
+                            <xsl:attribute name="srophe-tags" select="'#syriaca-headword'"/>
                         </xsl:when>
                         <xsl:when test="matches(name(),'^[a-zA-Z]*_anonymous-description')">
-                            <xsl:attribute name="syriaca-tags" select="'#anonymous-description'"/>
+                            <xsl:attribute name="srophe-tags" select="'#anonymous-description'"/>
                         </xsl:when>
                         <xsl:when test="matches(name(),'^[a-zA-Z]*_ektobe-headword')">
-                            <xsl:attribute name="syriaca-tags" select="'#ektobe-headword'"/>
+                            <xsl:attribute name="srophe-tags" select="'#ektobe-headword'"/>
                         </xsl:when>
                     </xsl:choose>
                     <!-- adds sourceUriColumn -->
@@ -247,7 +247,7 @@
             For example ... -->
         <!-- ??? This might need a little debugging. Mainly, I'm not entirely sure that whether using column names instead of numbers 
             works properly. If that's a problem, you could try it with column numbers instead of names. -->
-        <persName xml:lang="en" sourceUriColumn="Brooks_URI" syriaca-tags="#syriaca-headword"
+        <persName xml:lang="en" sourceUriColumn="Brooks_URI" srophe-tags="#syriaca-headword"
             column="Name_in_Index"/>
         <note xml:lang="en" type="abstract" column="Additional_Info"/>
         <birth xml:lang="en" whenColumn="Birth_Standard" notBeforeColumn="Birth_Not_Before"
@@ -427,15 +427,15 @@
     <!-- Consolidates matching elements from different sources -->
     <xsl:function name="srophe:consolidate-sources" as="node()*">
         <xsl:param name="input-nodes" as="node()*"/>
-        <xsl:for-each select="functx:distinct-deep(srophe:remove-attributes($input-nodes,('source','syriaca-tags')))">
+        <xsl:for-each select="functx:distinct-deep(srophe:remove-attributes($input-nodes,('source','srophe-tags')))">
             <xsl:variable name="this-node" select="."/>
             <xsl:element name="{$this-node/name()}" namespace="http://www.tei-c.org/ns/1.0">
-                <xsl:variable name="source" select="$input-nodes[deep-equal($this-node,functx:remove-attributes(.,('source','syriaca-tags')))]/attribute::source"/>
-                <xsl:variable name="syriaca-tags" select="$input-nodes[deep-equal($this-node,functx:remove-attributes(.,('source','syriaca-tags')))]/attribute::syriaca-tags"/>
+                <xsl:variable name="source" select="$input-nodes[deep-equal($this-node,functx:remove-attributes(.,('source','srophe-tags')))]/attribute::source"/>
+                <xsl:variable name="srophe-tags" select="$input-nodes[deep-equal($this-node,functx:remove-attributes(.,('source','srophe-tags')))]/attribute::srophe-tags"/>
                 <xsl:for-each select="$this-node/@*">
                     <xsl:attribute name="{name()}" select="."/>
                 </xsl:for-each>
-                <xsl:if test="$syriaca-tags!=''"><xsl:attribute name="syriaca-tags" select="$syriaca-tags"/></xsl:if>
+                <xsl:if test="$srophe-tags!=''"><xsl:attribute name="srophe-tags" select="$srophe-tags"/></xsl:if>
                 <xsl:if test="$source!=''"><xsl:attribute name="source" select="$source"/></xsl:if>
                 <xsl:copy-of select="$this-node/node()"/>
             </xsl:element>
@@ -681,67 +681,105 @@
                     <title level="a" xml:lang="en">
                         <xsl:copy-of select="$record-title"/>
                     </title>
-                    <sponsor>Syriaca.org: The Syriac Reference Portal</sponsor>
-                    <funder>The International Balzan Prize Foundation</funder>
-                    <funder>The National Endowment for the Humanities</funder>
-                    <principal>David A. Michelson</principal>
+                    <sponsor ref="https://www.uni-muenchen.de">
+                        <orgName>Ludwig Maximilian University of Munich</orgName>
+                        (<orgName xml:lang="de">Ludwig-Maximilians-Universität München</orgName>)
+                    </sponsor>
+                    <sponsor ref="http://www.naher-osten.uni-muenchen.de">
+                        <orgName>Institute of Near and Middle Eastern Studies</orgName>
+                        (<orgName xml:lang="de">Institut für den Nahen und Mittleren Osten</orgName>)
+                    </sponsor>
+                    <funder ref="https://www.bmbf.de/">
+                        <orgName>German Federal Ministry of Education and Research</orgName>
+                        (<orgName xml:lang="de">Bundesministerium für Bildung und Forschung</orgName>)
+                    </funder>
+                    <principal ref="#ngibson">Nathan P. Gibson</principal>
 
                     <!-- EDITORS -->
-                    <editor role="general"
-                        ref="http://syriaca.org/documentation/editors.xml#dmichelson">David A.
-                        Michelson</editor>
-                    <editor role="associate" ref="http://syriaca.org/documentation/editors.xml#jnsaint-laurent">Jeanne-Nicole Mellon Saint-Laurent</editor>
-                    <editor role="associate"
-                        ref="http://syriaca.org/documentation/editors.xml#ngibson">Nathan P.
-                        Gibson</editor>
-                    <editor role="associate" ref="http://syriaca.org/documentation/editors.xml#dschwartz">Daniel L.
-                        Schwartz</editor>
+                    <editor xml:id="ngibson" role="editor" ref="https://usaybia.net/documentation/editors.xml#ngibson 
+                        http://syriaca.org/documentation/editors.html#ngibson 
+                        https://www.naher-osten.uni-muenchen.de/personen/wiss_ma/gibson/index.html
+                        http://orcid.org/0000-0003-0786-8075
+                        http://viaf.org/viaf/59147905242279092527">Nathan P. Gibson</editor>
+                    <editor xml:id="vbirkhahn" role="contributor" ref="https://usaybia.net/documentation/editors.xml#vbirkhahn 
+                        https://www.naher-osten.uni-muenchen.de/personen/fachschaft/vanessa_birkhahn/index.html">Vanessa Birkhahn</editor>
+                    <editor xml:id="fioppolo" role="contributor" ref="https://usaybia.net/documentation/editors.xml#fioppolo
+                        https://www.naher-osten.uni-muenchen.de/personen/hilfskraefte/ioppolo/index.html">Fabio Ioppolo</editor>
+                    <editor xml:id="nloehr" role="contributor" ref="https://usaybia.net/documentation/editors.xml#nloehr
+                        https://www.naher-osten.uni-muenchen.de/personen/wiss_ma/nadine_loehr/index.html">Nadine Löhr</editor>
+                    <editor xml:id="mtolay" role="contributor" ref="https://usaybia.net/documentation/editors.xml#mtolay
+                        https://www.naher-osten.uni-muenchen.de/personen/hilfskraefte/tolay/index.html">Malinda Tolay</editor>
+                    <editor xml:id="rschmahl" role="contributor" ref="https://usaybia.net/documentation/editors.xml#rschmahl
+                        https://www.naher-osten.uni-muenchen.de/personen/hilfskraefte/schmahl/index.html">Robin Schmahl</editor>
+                    
 
                     <!-- CREATOR -->
                     <!-- designates the editor responsible for creating this person record (may be different from the file creator) -->
-                    <editor role="creator" ref="http://syriaca.org/documentation/editors.xml#abinggeli">André Binggeli</editor>
-                    <editor role="creator" ref="http://syriaca.org/documentation/editors.xml#fbriquelchatonnet">Françoise Briquel-Chatonnet</editor>
-                    <editor role="creator" ref="http://syriaca.org/documentation/editors.xml#mdebie">Muriel Debié</editor>
-                    <editor role="creator" ref="http://syriaca.org/documentation/editors.xml#adesreumaux">Alain Desreumaux</editor>
-                    <editor role="creator" ref="http://syriaca.org/documentation/editors.xml#evilley">Emilie Villey</editor>
-                    <editor role="creator" ref="http://syriaca.org/documentation/editors.xml#ydergham">Youssef Dergham</editor>
-                    <editor role="creator" ref="http://syriaca.org/documentation/editors.xml#mfarina">Margherita Farina</editor>
-                    <editor role="creator" ref="http://syriaca.org/documentation/editors.xml#spratelli">Simone I. M. Pratelli</editor>
-                    <editor role="creator" ref="http://syriaca.org/documentation/editors.xml#fruani">Flavia Ruani</editor>
-                    <editor role="creator" ref="http://syriaca.org/documentation/editors.xml#eserra">Eleonora Serra</editor>
+                    <editor role="creator" ref="#ngibson">Nathan P. Gibson</editor>
+                    <editor role="creator" ref="#vbirkhahn">Vanessa Birkhahn</editor>
+                    <editor role="creator" ref="#fioppolo">Fabio Ioppolo</editor>
+                    <editor role="creator" ref="#nloehr">Nadine Löhr</editor>
+                    <editor role="creator" ref="#mtolay">Malinda Tolay</editor>
+                    <editor role="creator" ref="#rschmahl">Robin Schmahl</editor>
 
                     <!-- CONTRIBUTORS -->
                     <respStmt>
-                        <resp>These names were received as a dataset from E-Ktobe : manuscrits syriaques 
-                            (<ref target="http://syriac.msscatalog.org/">http://syriac.msscatalog.org/</ref>). 
-                            Née sur l’initiative d'André Binggeli (IRHT-CNRS), Françoise Briquel-Chatonnet (Orient et Méditerranée-CNRS), 
-                            Muriel Debié (EPHE) et Alain Desreumaux (Orient et Méditerranée-CNRS) dans le cadre du programme 
-                            SYRAB de l'ANR (Agence Nationale de la Recherche), la base e-ktobe est actuellement placée sous la responsabilité 
-                            scientifique d’André Binggeli et Emilie Villey (Orient et Méditerranée-CNRS).                            
-                            Liste des collaborateurs contribuant ou ayant contribué à l’alimentation de la base : 
-                            Youssef Dergham (Bibliothèque du patriarcat syro-catholique de Charfet), Margherita Farina (CNRS, Paris), 
-                            Simone I. M. Pratelli (U. de Constance), Flavia Ruani (U. de Gand) et Eleonora Serra (U. de Pise).</resp>
-                        <orgName ref="http://syriac.msscatalog.org/">E-Ktobe : manuscrits syriaques</orgName>
+                        <resp>The orignal version of this record was adapted from the index entry in 
+                            A Literary History of Medicine: The “Uyūn al-Anbā” Fī Ṭabaqāt al-Aṭibbā’ of 
+                            Ibn Abī Uṣaybi’ah, 5 vols. (Leiden: Brill, 2020) by</resp>
+                        <name>Emilie Savage-Smith</name>
+                        <name>Simon Swain</name>
+                        <name>G. J. H. van Gelder</name>
                     </respStmt>
                     <respStmt>
-                        <resp>Conversion to TEI-XML by</resp>
-                        <name type="person" ref="http://syriaca.org/documentation/editors.xml#ngibson">Nathan P. Gibson</name>
+                        <resp>Conversion into tabular and TEI-XML formats, data mining, and proofing by</resp>
+                        <name type="person" ref="#ngibson">Nathan P. Gibson</name>
+                    </respStmt>                    
+                    <respStmt>
+                        <resp>Entity classification, bibliography editing,
+                            and occupational, affiliational, and gender descriptors by</resp>
+                        <name type="person" ref="#vbirkhahn">Vanessa Birkhahn</name>
                     </respStmt>
                     <respStmt>
-                        <resp>Data architecture by</resp>
+                        <resp>English and Arabic name entry, 
+                            matching with external records by</resp>
+                        <name type="person" ref="#rschmahl">Robin Schmahl</name>
+                    </respStmt>
+                    <respStmt>
+                        <resp>Relational descriptors, English and Arabic name entry, 
+                            matching with external records by</resp>
+                        <name type="person" ref="#mtolay">Malinda Tolay</name>
+                    </respStmt>
+                    <respStmt>
+                        <resp>Relational descriptors by</resp>
+                        <name type="person" ref="#fioppolo">Fabio Ioppolo</name>
+                    </respStmt>
+                    <respStmt>
+                        <resp>Bibliography editing by</resp>
+                        <name type="person" ref="#nloehr">Nadine Löhr</name>
+                    </respStmt>
+                    <respStmt>
+                        <resp>Original data architecture of TEI person records for Srophé by</resp>
                         <name type="person" ref="http://syriaca.org/documentation/editors.xml#dmichelson">David A. Michelson</name>
+                    </respStmt>
+                    <respStmt>
+                        <resp>Srophé app design and development by</resp>
+                        <name type="person" ref="http://syriaca.org/documentation/editors.xml#wsalesky">Winona Salesky</name>
                     </respStmt>
                 </titleStmt>
                 <editionStmt>
                     <edition n="1.0"/>
                 </editionStmt>
                 <publicationStmt>
-                    <authority>Syriaca.org: The Syriac Reference Portal</authority>
+                    <authority>
+                        <ref target="https://usaybia.net">Usaybia.net</ref>
+                    </authority>
+                    <date>2020</date>
                     <idno type="URI">https://usaybia.net/person/<xsl:value-of select="$record-id"
                         />/tei</idno>
                     <availability>
                         <licence target="http://creativecommons.org/licenses/by/3.0/">
-                            <p>Distributed under a Creative Commons Attribution 3.0 Unported
+                            <p>Distributed under a Creative Commons Attribution 4.0 International (CC BY 4.0)
                                 License.</p>
                             <!-- !!! If copyright material is included, the following should be adapted and used. -->
                             <!--<p>This entry incorporates copyrighted material from the following work(s):
@@ -767,7 +805,7 @@
                 </publicationStmt>
 
                 <!-- SERIES STATEMENTS -->
-                <seriesStmt>
+                <!--<seriesStmt>
                     <title level="s">The Syriac Biographical Dictionary</title>
                     <editor role="general"
                         ref="http://syriaca.org/documentation/editors.xml#dmichelson">David A.
@@ -805,8 +843,8 @@
                             Schwartz</name>
                     </respStmt>
                     <idno type="URI">http://usaybia.net/persons</idno>
-                    <!-- selects which vol. of SBD this record is contained in, depending on whether the person is a saint and/or author. 
-                        Vol. 1 for saints, vol. 2 for authors, vol. 3 for neither. -->
+                    <!-\- selects which vol. of SBD this record is contained in, depending on whether the person is a saint and/or author. 
+                        Vol. 1 for saints, vol. 2 for authors, vol. 3 for neither. -\->
                     <xsl:if test="$is-saint">
                         <biblScope unit="vol" from="1" to="1">
                             <title level="m">Qadishe: A Guide to the Syriac Saints</title>
@@ -822,10 +860,10 @@
                     <xsl:if test="not($is-saint) and not($is-author)">
                         <biblScope unit="vol">3</biblScope>
                     </xsl:if>
-                </seriesStmt>
+                </seriesStmt>-->
                 
                 <!-- adds a series statement for saints dataset if the person is a saint -->
-                <xsl:if test="$is-saint">
+                <!--<xsl:if test="$is-saint">
                     <seriesStmt>
                         <title level="s">Gateway to the Syriac Saints</title>
                         <editor role="general"
@@ -852,7 +890,7 @@
                             <idno type="URI">http://syriaca.org/q</idno>
                         </biblScope>
                     </seriesStmt>
-                </xsl:if>
+                </xsl:if>-->
                 
                 <sourceDesc>
                     <p>Born digital.</p>
@@ -956,7 +994,7 @@
                     <!-- gets the bibl URI number from the cell that contains the source for the spreadsheet cell being processed -->
                     <xsl:variable name="this-column-source"
                         select="$columns-to-convert[name()=$this-column/@sourceUriColumn][1]"/>
-                    <!-- turns that bibl URI number into a complete Syriaca.org URI -->
+                    <!-- turns that bibl URI number into a complete Usaybia.net URI -->
                     <xsl:variable name="column-uri"
                         select="concat('https://usaybia.net/bibl/',$this-column-source)"/>
                     <!-- gets the name/position of the spreadsheet column that contains the citedRange data for this cell (using the source column name) -->
@@ -986,7 +1024,7 @@
                                 <xsl:variable name="attestation-URIs" select="tokenize($column-contents,'\s*,\s*')"/>
                                 <xsl:variable name="en-headword" select="normalize-space($columns-to-convert[matches(name(.),'.*syriaca\-headword.*\.en.*') and .!=''][1])"/>
                                 <xsl:for-each select="$attestation-URIs">
-                                    <xsl:variable name="attesting-work-url" select="concat(replace(.,'https://usaybia.net','http://wwwb.library.vanderbilt.edu'),'/tei')"/>
+                                    <xsl:variable name="attesting-work-url" select="concat(.,'/tei')"/>
                                     <xsl:variable name="attesting-work-title">
                                         <xsl:copy-of
                                             select="document($attesting-work-url)/TEI/text/body/bibl/title[contains(@srophe-tags,'#syriaca-headword') and starts-with(@xml:lang,'en')]"
@@ -1152,9 +1190,10 @@
                         select="$this-row[name()=$cited-ranges/@column or position()=$cited-ranges/@column]!=''"/>
                     <!-- produces bibl only if this is the matching source column and has data in corresponding cited range columns -->
                     <xsl:if test="$is-matching-source-column and $has-cited-ranges">
-                        <!-- creates the path to the bibl TEI using the URI number from the cell being processed -->
+                        <!-- creates the path to the bibl TEI using the URI number from the cell being processed.
+                        This can be replaced with a development server address if needed. -->
                         <xsl:variable name="bibl-url"
-                            select="concat('http://wwwb.library.vanderbilt.edu/bibl/',.,'/tei')"/>
+                            select="concat('https://usaybia.net/bibl/',.,'/tei')"/>
 
                         <!-- BIBL ELEMENT -->
                         <bibl>
