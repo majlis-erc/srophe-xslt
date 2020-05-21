@@ -2,7 +2,7 @@
 <?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema" exclude-result-prefixes="xs" version="2.0"
-    xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:syriaca="http://syriaca.org" xmlns:saxon="http://saxon.sf.net/" xmlns:functx="http://www.functx.com">
+    xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:srophe="https://srophe.app" xmlns:saxon="http://saxon.sf.net/" xmlns:functx="http://www.functx.com">
 
     <!-- FORMAT OF COMMENTS -->
     <!-- ??? Indicates an issue that needs resolving. -->
@@ -49,7 +49,7 @@
         <!-- uses the first row to define columns -->
         <xsl:for-each select="/root/row[1]/*">
             <!-- uses the column name to find out which element name and attributes it should use -->
-            <xsl:variable name="column-info" select="syriaca:column-name(name())"/>
+            <xsl:variable name="column-info" select="srophe:column-name(name())"/>
             <!--            <xsl:variable name="test-element-name" select="$column-info/*[1]"/>-->
             <!--<xsl:if
                 test="$column-info/elementName=('persName' or 'sex' or 'state' or 'birth' or 'death' or 'floruit' or 'citedRange' or 'idno' or 'relation' or 'note' or 'trait') and $column-info/attributeValueOrType!=('when' or 'notBefore' or 'notAfter')">
@@ -85,6 +85,9 @@
                     <xsl:choose>
                         <xsl:when test="matches(name(),'\.en-x-gedsh$')">
                             <xsl:attribute name="xml:lang" select="'en-x-gedsh'"/>
+                        </xsl:when>
+                        <xsl:when test="matches(name(),'\.en-x-lhom$')">
+                            <xsl:attribute name="xml:lang" select="'en-x-lhom'"/>
                         </xsl:when>
                         <xsl:when test="matches(name(),'\.en$')">
                             <xsl:attribute name="xml:lang" select="'en'"/>
@@ -261,7 +264,7 @@
     <!-- CUSTOM FUNCTIONS -->
     <!-- used in auto column-mapping to determine the element name and attributes that should be created for that column. 
         Column naming format is "elementName attributeValueOrType.sourceColumnName.languageCode" -->
-    <xsl:function name="syriaca:column-name">
+    <xsl:function name="srophe:column-name">
         <xsl:param name="column-name" as="xs:string"/>
         <!-- separates the column name into its relevant parts -->
         <xsl:analyze-string select="$column-name"
@@ -286,7 +289,7 @@
     <!-- date processing by Winona Salesky -->
     <!-- creates the dates to be used for @syriaca-computed-start and @syriaca-computed-end. 
         Called by the column-mapping template -->
-    <xsl:function name="syriaca:custom-dates" as="xs:date">
+    <xsl:function name="srophe:custom-dates" as="xs:date">
         <xsl:param name="date" as="xs:string"/>
         <xsl:variable name="trim-date" select="normalize-space($date)"/>
         <xsl:choose>
@@ -321,14 +324,14 @@
     </xsl:function>
     
     <!-- Applies the TEI namespace to all descendants of a node. -->
-    <xsl:function name="syriaca:include-tei-children" as="node()*">
+    <xsl:function name="srophe:include-tei-children" as="node()*">
         <xsl:param name="parent-node" as="node()*"/>
         <xsl:choose>
             <xsl:when test="$parent-node/*">
                 <xsl:for-each select="$parent-node/node()">
                     <xsl:choose>
                         <xsl:when test="local-name()">
-                            <xsl:element name="{local-name()}" namespace="http://www.tei-c.org/ns/1.0"><xsl:copy-of select="attribute::*|syriaca:include-tei-children(.)"/></xsl:element>
+                            <xsl:element name="{local-name()}" namespace="http://www.tei-c.org/ns/1.0"><xsl:copy-of select="attribute::*|srophe:include-tei-children(.)"/></xsl:element>
                         </xsl:when>
                         <xsl:otherwise><xsl:copy-of select="."/></xsl:otherwise>
                     </xsl:choose>
@@ -390,7 +393,7 @@
         
     </xsl:function>
     
-    <xsl:function name="syriaca:remove-attributes" as="node()*">
+    <xsl:function name="srophe:remove-attributes" as="node()*">
         <xsl:param name="nodes" as="node()*"/>
         <xsl:param name="names" as="xs:string*"/>
         <xsl:for-each select="$nodes">
@@ -422,9 +425,9 @@
     </xsl:function>
     
     <!-- Consolidates matching elements from different sources -->
-    <xsl:function name="syriaca:consolidate-sources" as="node()*">
+    <xsl:function name="srophe:consolidate-sources" as="node()*">
         <xsl:param name="input-nodes" as="node()*"/>
-        <xsl:for-each select="functx:distinct-deep(syriaca:remove-attributes($input-nodes,('source','syriaca-tags')))">
+        <xsl:for-each select="functx:distinct-deep(srophe:remove-attributes($input-nodes,('source','syriaca-tags')))">
             <xsl:variable name="this-node" select="."/>
             <xsl:element name="{$this-node/name()}" namespace="http://www.tei-c.org/ns/1.0">
                 <xsl:variable name="source" select="$input-nodes[deep-equal($this-node,functx:remove-attributes(.,('source','syriaca-tags')))]/attribute::source"/>
@@ -440,7 +443,7 @@
     </xsl:function>
 
     <!-- Adds xml:id to each node -->
-    <xsl:function name="syriaca:add-xml-id" as="node()*">
+    <xsl:function name="srophe:add-xml-id" as="node()*">
         <xsl:param name="input-nodes" as="node()*"/>
         <xsl:param name="record-id" as="xs:string"/>
         <xsl:param name="id-prefix" as="xs:string"/>
@@ -552,11 +555,11 @@
                                         <!-- !!! If you have added any new types of elements in $column-mapping, you must call them here. 
                                     You must include @xpath-default-namespace="http://www.tei-c.org/ns/1.0" 
                                     You can also change the order of these elements according to your preference, so long as it still produces valid TEI. -->
-                                        <xsl:copy-of select="syriaca:add-xml-id(syriaca:consolidate-sources($converted-columns/persName),$record-id,'name')"
+                                        <xsl:copy-of select="srophe:add-xml-id(srophe:consolidate-sources($converted-columns/persName),$record-id,'name')"
                                             xpath-default-namespace="http://www.tei-c.org/ns/1.0"/>
                                         <xsl:if test="$converted-columns/tei:note[@type='abstract']!=''">
                                             <xsl:element name="note" namespace="http://www.tei-c.org/ns/1.0">
-                                                <!-- this can't use the syriaca:add-xml-id function because the attribute value has a different format -->
+                                                <!-- this can't use the srophe:add-xml-id function because the attribute value has a different format -->
                                                 <xsl:attribute name="xml:id" select="concat('abstract-en-',$record-id)"/>
                                                 <xsl:copy-of select="$converted-columns/note[@type='abstract']/(node()|@*)"
                                                     xpath-default-namespace="http://www.tei-c.org/ns/1.0">
@@ -578,19 +581,19 @@
                                         <!-- continues copy-of instructions for TEI elements from $converted-columns -->
                                         <xsl:copy-of select="$converted-columns/idno"
                                             xpath-default-namespace="http://www.tei-c.org/ns/1.0"/>
-                                        <xsl:copy-of select="syriaca:consolidate-sources($converted-columns/birth)"
+                                        <xsl:copy-of select="srophe:consolidate-sources($converted-columns/birth)"
                                             xpath-default-namespace="http://www.tei-c.org/ns/1.0"/>
-                                        <xsl:copy-of select="syriaca:consolidate-sources($converted-columns/death)"
+                                        <xsl:copy-of select="srophe:consolidate-sources($converted-columns/death)"
                                             xpath-default-namespace="http://www.tei-c.org/ns/1.0"/>
-                                        <xsl:copy-of select="syriaca:consolidate-sources($converted-columns/floruit)"
+                                        <xsl:copy-of select="srophe:consolidate-sources($converted-columns/floruit)"
                                             xpath-default-namespace="http://www.tei-c.org/ns/1.0"/>
-                                        <xsl:copy-of select="syriaca:consolidate-sources($converted-columns/state)"
+                                        <xsl:copy-of select="srophe:consolidate-sources($converted-columns/state)"
                                             xpath-default-namespace="http://www.tei-c.org/ns/1.0"/>
-                                        <xsl:copy-of select="syriaca:consolidate-sources($converted-columns/trait)"
+                                        <xsl:copy-of select="srophe:consolidate-sources($converted-columns/trait)"
                                             xpath-default-namespace="http://www.tei-c.org/ns/1.0"/>
-                                        <xsl:copy-of select="syriaca:consolidate-sources($converted-columns/sex)"
+                                        <xsl:copy-of select="srophe:consolidate-sources($converted-columns/sex)"
                                             xpath-default-namespace="http://www.tei-c.org/ns/1.0"/>
-                                        <xsl:copy-of select="syriaca:consolidate-sources($converted-columns/event)"
+                                        <xsl:copy-of select="srophe:consolidate-sources($converted-columns/event)"
                                             xpath-default-namespace="http://www.tei-c.org/ns/1.0"/>
 
                                         <!-- BIBLS -->
@@ -603,7 +606,7 @@
 
                                     <!-- RELATIONS -->
                                     <!-- imports relation elements from $converted-columns-->
-                                    <xsl:copy-of select="syriaca:consolidate-sources($converted-columns/relation)"
+                                    <xsl:copy-of select="srophe:consolidate-sources($converted-columns/relation)"
                                         xpath-default-namespace="http://www.tei-c.org/ns/1.0"/>
 
                                 </listPerson>
@@ -944,7 +947,7 @@
             <xsl:if test=".!=''">
                 <!-- grabs the contents of the column so that it can be used in nested for-each statements -->
                 <xsl:variable name="column-contents">
-                    <xsl:copy-of select="syriaca:include-tei-children(.)"/>
+                    <xsl:copy-of select="srophe:include-tei-children(.)"/>
                 </xsl:variable>
                 <!-- cycles through each of the elements pre-defined in $column-mapping, checking whether they have the current spreadsheet column as @column 
                     and processing the data if they do. -->
@@ -1003,17 +1006,17 @@
                                     <xsl:if test="$when!=''">
                                         <xsl:attribute name="when" select="$when"/>
                                         <xsl:attribute name="syriaca-computed-start"
-                                            select="syriaca:custom-dates($when)"/>
+                                            select="srophe:custom-dates($when)"/>
                                     </xsl:if>
                                     <xsl:if test="$not-before!=''">
                                         <xsl:attribute name="notBefore" select="$not-before"/>
                                         <xsl:attribute name="syriaca-computed-start"
-                                            select="syriaca:custom-dates($not-before)"/>
+                                            select="srophe:custom-dates($not-before)"/>
                                     </xsl:if>
                                     <xsl:if test="$not-after!=''">
                                         <xsl:attribute name="notAfter" select="$not-after"/>
                                         <xsl:attribute name="syriaca-computed-end"
-                                            select="syriaca:custom-dates($not-after)"/>
+                                            select="srophe:custom-dates($not-after)"/>
                                     </xsl:if>
                                     <!-- adds the source column by matching the @sourceUriColumn (and corresponding citedRange, where present) to the available bibl ptr elements.  -->
                                     <xsl:choose>
@@ -1061,14 +1064,14 @@
                                             <xsl:choose>
                                                 <!-- adds possibly identical relation -->
                                                 <!-- !!! You can define more relation types here (and in $column-mapping) -->
-                                                <xsl:when test="@ref = 'syriaca:possiblyIdentical'">
+                                                <xsl:when test="@ref = 'srophe:possiblyIdentical'">
                                                     <xsl:attribute name="mutual"
                                                         select="concat($record-uri, ' ', normalize-space($tokenized-relation-uris))"/>
                                                     <desc xml:lang="en">This person is possibly
                                                         identical with one or more persons represented in
                                                         another record</desc>
                                                 </xsl:when>
-                                                <xsl:when test="@ref = 'syriaca:differentFrom'">
+                                                <xsl:when test="@ref = 'srophe:differentFrom'">
                                                     <xsl:attribute name="mutual"
                                                         select="concat($record-uri, ' ', normalize-space($tokenized-relation-uris))"/>
                                                     <desc xml:lang="en">The following persons are not
@@ -1077,7 +1080,7 @@
                                                             select="string-join(($record-uri, string-join(normalize-space($tokenized-relation-uris), ', ')), ', ')"
                                                         /></desc>
                                                 </xsl:when>
-                                                <xsl:when test="@ref = 'syriaca:hasRelationToPlace'">
+                                                <xsl:when test="@ref = 'srophe:hasRelationToPlace'">
                                                     <xsl:attribute name="active" select="$record-uri"/>
                                                     <xsl:attribute name="passive"
                                                         select="normalize-space($tokenized-relation-uris)"/>
