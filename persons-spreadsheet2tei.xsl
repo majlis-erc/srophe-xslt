@@ -502,7 +502,7 @@
             <xsl:variable name="filename">
                 <xsl:choose>
                     <!-- tests whether there is sufficient data to create a complete record. If not, puts it in an 'incomplete' folder inside the $directory -->
-                    <xsl:when test="empty($converted-columns/*[@syriaca-tags='#syriaca-headword'])">
+                    <xsl:when test="empty($converted-columns/*[@srophe-tags='#syriaca-headword'])">
                         <xsl:value-of select="concat($directory,'/incomplete/',$record-id,'.xml')"/>
                     </xsl:when>
                     <!-- if record is complete and has a URI, puts it in the $directory folder -->
@@ -527,7 +527,7 @@
 
                     <!-- RECORD CONTENT BEGINS -->
                     <TEI xml:lang="en" xmlns="http://www.tei-c.org/ns/1.0">
-                        <xsl:variable name="en-headword" select="$converted-columns/*[@syriaca-tags='#syriaca-headword' and starts-with(@xml:lang, 'en')]"></xsl:variable>
+                        <xsl:variable name="en-headword" select="$converted-columns/*[@srophe-tags='#syriaca-headword' and starts-with(@xml:lang, 'en')]"></xsl:variable>
                         <!-- Adds header from the header template -->
                         <xsl:call-template name="header">
                             <xsl:with-param name="record-id" select="$record-id"/>
@@ -644,9 +644,9 @@
             <!-- grabs the anonymous description, if there is one. -->
             <xsl:choose>
                 <xsl:when
-                    test="$converted-columns/*[@syriaca-tags='#anonymous-description']">
+                    test="$converted-columns/*[@srophe-tags='#anonymous-description']">
                     <xsl:value-of
-                        select="$converted-columns/*[@syriaca-tags='#anonymous-description']"
+                        select="$converted-columns/*[@srophe-tags='#anonymous-description']"
                     />
                 </xsl:when>
             </xsl:choose>
@@ -655,9 +655,9 @@
             <!-- grabs the Syriac headword, if there is one. -->
             <xsl:choose>
                 <xsl:when
-                    test="$converted-columns/*[@syriaca-tags='#syriaca-headword' and starts-with(@xml:lang,'syr')]">
+                    test="$converted-columns/*[@srophe-tags='#syriaca-headword' and starts-with(@xml:lang,'syr')]">
                     <xsl:value-of
-                        select="$converted-columns/*[@syriaca-tags='#syriaca-headword' and starts-with(@xml:lang,'syr')]"
+                        select="$converted-columns/*[@srophe-tags='#syriaca-headword' and starts-with(@xml:lang,'syr')]"
                     />
                 </xsl:when>
             </xsl:choose>
@@ -989,7 +989,7 @@
                                     <xsl:variable name="attesting-work-url" select="concat(replace(.,'https://usaybia.net','http://wwwb.library.vanderbilt.edu'),'/tei')"/>
                                     <xsl:variable name="attesting-work-title">
                                         <xsl:copy-of
-                                            select="document($attesting-work-url)/TEI/text/body/bibl/title[contains(@syriaca-tags,'#syriaca-headword') and starts-with(@xml:lang,'en')]"
+                                            select="document($attesting-work-url)/TEI/text/body/bibl/title[contains(@srophe-tags,'#syriaca-headword') and starts-with(@xml:lang,'en')]"
                                             xpath-default-namespace="http://www.tei-c.org/ns/1.0"/>
                                     </xsl:variable>
                                     <xsl:element name="{$node-name}">
