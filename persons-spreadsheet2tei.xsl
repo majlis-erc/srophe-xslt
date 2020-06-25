@@ -259,7 +259,7 @@
     <!-- specifies where the output TEI files should go -->
     <!-- !!! Change this to where you want the output files to be placed relative to the XML file being converted. 
         This should end with a trailing slash (/).-->
-    <xsl:variable name="directory">sample-files/</xsl:variable>
+    <xsl:variable name="directory">../tei/</xsl:variable>
 
     <!-- CUSTOM FUNCTIONS -->
     <!-- used in auto column-mapping to determine the element name and attributes that should be created for that column. 
@@ -707,10 +707,10 @@
                         https://www.naher-osten.uni-muenchen.de/personen/hilfskraefte/ioppolo/index.html">Fabio Ioppolo</editor>
                     <editor xml:id="nloehr" role="contributor" ref="https://usaybia.net/documentation/editors.xml#nloehr
                         https://www.naher-osten.uni-muenchen.de/personen/wiss_ma/nadine_loehr/index.html">Nadine Löhr</editor>
-                    <editor xml:id="mtolay" role="contributor" ref="https://usaybia.net/documentation/editors.xml#mtolay
-                        https://www.naher-osten.uni-muenchen.de/personen/hilfskraefte/tolay/index.html">Malinda Tolay</editor>
                     <editor xml:id="rschmahl" role="contributor" ref="https://usaybia.net/documentation/editors.xml#rschmahl
                         https://www.naher-osten.uni-muenchen.de/personen/hilfskraefte/schmahl/index.html">Robin Schmahl</editor>
+                    <editor xml:id="mtolay" role="contributor" ref="https://usaybia.net/documentation/editors.xml#mtolay
+                        https://www.naher-osten.uni-muenchen.de/personen/hilfskraefte/tolay/index.html">Malinda Tolay</editor>
                     
 
                     <!-- CREATOR -->
@@ -719,8 +719,8 @@
                     <editor role="creator" ref="#vbirkhahn">Vanessa Birkhahn</editor>
                     <editor role="creator" ref="#fioppolo">Fabio Ioppolo</editor>
                     <editor role="creator" ref="#nloehr">Nadine Löhr</editor>
-                    <editor role="creator" ref="#mtolay">Malinda Tolay</editor>
                     <editor role="creator" ref="#rschmahl">Robin Schmahl</editor>
+                    <editor role="creator" ref="#mtolay">Malinda Tolay</editor>
 
                     <!-- CONTRIBUTORS -->
                     <respStmt>
@@ -768,7 +768,7 @@
                     </respStmt>
                 </titleStmt>
                 <editionStmt>
-                    <edition n="1.0"/>
+                    <edition n="0.3"/>
                 </editionStmt>
                 <publicationStmt>
                     <authority>
@@ -958,8 +958,12 @@
             <revisionDesc status="draft">
 
                 <!-- FILE CREATOR -->
-                <change who="http://syriaca.org/documentation/editors.xml#ngibson" n="1.0">
-                    <xsl:attribute name="when" select="current-date()"/>CREATED: person</change>
+                <change who="http://usaybia.net/documentation/editors.xml#ngibson"
+                 n="0.2"
+                 when="2020-06-08+02:00">CREATED: person from spreadsheet https://docs.google.com/spreadsheets/d/1ujiT91ua3sA-WX86OWpuE-gDD_E-zONpI1dP70pXdWw/edit#gid=0.
+                The canonical record is currently in the spreadsheet. Changes should be made there. THIS FILE SHOULD NOT BE MANUALLY EDITED!</change>
+                <change who="http://syriaca.org/documentation/editors.xml#ngibson" n="0.3">
+                    <xsl:attribute name="when" select="current-date()"/>CHANGED: CREATED: Updated person from spreadsheet https://docs.google.com/spreadsheets/d/1ujiT91ua3sA-WX86OWpuE-gDD_E-zONpI1dP70pXdWw/edit#gid=0.</change>
 
                 <!-- PLANNED CHANGES -->
                 <!-- ??? Are there any change @type='planned' ? -->
