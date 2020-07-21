@@ -963,7 +963,7 @@
                  when="2020-06-08+02:00">CREATED: person from spreadsheet https://docs.google.com/spreadsheets/d/1ujiT91ua3sA-WX86OWpuE-gDD_E-zONpI1dP70pXdWw/edit#gid=0.
                 The canonical record is currently in the spreadsheet. Changes should be made there. THIS FILE SHOULD NOT BE MANUALLY EDITED!</change>
                 <change who="http://syriaca.org/documentation/editors.xml#ngibson" n="0.3">
-                    <xsl:attribute name="when" select="current-date()"/>CHANGED: CREATED: Updated person from spreadsheet https://docs.google.com/spreadsheets/d/1ujiT91ua3sA-WX86OWpuE-gDD_E-zONpI1dP70pXdWw/edit#gid=0.</change>
+                    <xsl:attribute name="when" select="current-date()"/>CHANGED: Updated person from spreadsheet https://docs.google.com/spreadsheets/d/1ujiT91ua3sA-WX86OWpuE-gDD_E-zONpI1dP70pXdWw/edit#gid=0.</change>
 
                 <!-- PLANNED CHANGES -->
                 <!-- ??? Are there any change @type='planned' ? -->
