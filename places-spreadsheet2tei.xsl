@@ -1,141 +1,250 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
-    xmlns="http://www.tei-c.org/ns/1.0"
-    exclude-result-prefixes="xs"
-    version="2.0">
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.tei-c.org/ns/1.0"
+    exclude-result-prefixes="xs" version="2.0">
+
+    <!-- FILE OUTPUT PROCESSING -->
+    <!-- specifies how the output file will look -->
+    <xsl:output encoding="UTF-8" indent="yes" method="xml" name="xml"/>
+    <!-- Relative path to directory where output files will go. -->
+    <xsl:variable name="directory" select="'tei/'"/>
+
     <xsl:template match="/root/row">
-        <xsl:if test="string-length(URI)">
+        <xsl:if test="URI != ''">
             <xsl:variable name="uri" select="URI"/>
-            <xsl:variable name="id" select="replace($uri,'https://usaybia.net/place/','')"/>
-            <TEI xmlns="http://www.tei-c.org/ns/1.0" 
-                xmlns:srophe="https://srophe.app" 
-                xmlns:syriaca="http://syriaca.org" 
-                xmlns:svg="http://www.w3.org/2000/svg" 
-                xml:lang="en">
-                <teiHeader>
-                    <fileDesc>
-                        <titleStmt>
-                            <title level="a" xml:lang="en">
-                                <xsl:value-of select="Name__curated_"/>
-                            </title>
-                            <sponsor>Syriaca.org: The Syriac Reference Portal</sponsor>
-                            <funder>The National Endowment for the Humanities</funder>
-                            <funder>The International Balzan Prize Foundation</funder>
-                            <editor role="creator" ref="http://syriaca.org/documentation/editors.xml#dschwartz">Daniel L. Schwartz</editor>
-                            <respStmt>
-                                <resp>Data collected and record created by</resp>
-                                <name ref="http://syriaca.org/documentation/editors.xml#dschwartz">Daniel L. Schwartz</name>
-                            </respStmt>
-                        </titleStmt>
-                        <editionStmt>
-                            <edition n="2.0"/>
-                        </editionStmt>
-                        <publicationStmt>
-                            <authority>Syriaca.org: The Syriac Reference Portal</authority>
-                            <idno type="URI"><xsl:value-of select="concat($uri,'/tei')"/></idno>
-                            <availability>
-                                <licence target="http://creativecommons.org/licenses/by/3.0/">
-                                    <p>Distributed under a Creative Commons Attribution 3.0 Unported License.</p>
-                                </licence>
-                            </availability>
-                            <date><xsl:value-of select="current-date()"/></date>
-                        </publicationStmt>
-                        <seriesStmt>
-                            <title level="s" xml:lang="en">The Syriac Gazetteer</title>
-                            <editor role="general" ref="http://syriaca.org/documentation/editors.xml#dmichelson">
-                                <persName>David A. Michelson</persName>, <date from="2014">2014-present</date>.</editor>
-                            <editor role="general" ref="http://syriaca.org/documentation/editors.xml#wpotter">
-                                <persName>William L. Potter</persName>, <date from="2020">2020-present</date>.</editor>
-                            <editor role="past-general" ref="http://syriaca.org/documentation/editors.xml#tcarlson">
-                                <persName>Thomas A. Carlson</persName>, <date from="2014" to="2018">2014-2018</date>
-                            </editor>
-                            <editor role="technical" ref="http://syriaca.org/documentation/editors.xml#dmichelson">
-                                <persName>David A. Michelson</persName>, <date from="2014">2014-present</date>.</editor>
-                            <editor role="technical" ref="http://syriaca.org/documentation/editors.xml#dschwartz">
-                                <persName>Daniel L. Schwartz</persName>, <date from="2019">2019-present</date>.</editor>
-                            <editor role="technical" ref="http://syriaca.org/documentation/editors.xml#wpotter">
-                                <persName>William L. Potter</persName>, <date from="2020">2020-present</date>.</editor>
-                            <idno type="URI">http://syriaca.org/geo</idno>
-                        </seriesStmt>
-                        <sourceDesc>
-                            <p>Born digital.</p>
-                        </sourceDesc>
-                    </fileDesc>
-                    <encodingDesc>
-                        <editorialDecl>
-                            <p>This record has been created following the Syriaca.org editorial guidelines. Documentation is available at: <ref target="http://syriaca.org/documentation">http://syriaca.org/documentation</ref>. <title>The Syriac Gazetteer</title> was encoded using both the general editorial guidelines for all publications of Syriaca.org and an encoding schema specific to <title>The Syriac Gazetteer</title>.</p>
-                            <p>Approximate dates described in terms of centuries or partial centuries have been interpreted into quantitative values as documented in the Syriaca.org guidelines for normalization of dates. See <ref target="http://syriaca.org/documentation/dates.html">Syriaca.org Guidelines for Approximate Dates</ref>.</p>
-                            <p>The <gi>state</gi> element of @type="existence" indicates the period for which this place was in use as a place of its indicated type (e.g. an inhabited settlement, a functioning monastery or church, an administrative province).  While it is possible to indicate a source for this date, this date is usually based on the estimate of the editors and provided as an aid to searching. As a practice, attested dates for a place based on historical sources have instead been encoded more precisely using <gi>event</gi> of @type="attestation". Natural features which have always existed have no date on the <gi>state</gi> element of @type="existence" since they are are presumed to have always existed throughout recorded history.</p>
-                            <p>In some cases, maps from print publications have been used as the basis for coordinate data in <title>The Syriac Gazetteer</title>. In two instances, the editors of such print maps provided the digital coordinate data used to prepare the print maps. Specifically, coordinates which are attributed to <title>The Gorgias Encyclopedic Dictionary of the Syriac Heritage</title> (<ref target="http://syriaca.org/bibl/1">http://syriaca.org/bibl/1</ref>) or to <title>The Syriac World</title> (<ref target="http://syriaca.org/bibl/PUTG99V4">http://syriaca.org/bibl/PUTG99V4</ref>) were extracted from the KML files used to create the print maps for those volumes. Because only the print maps were published, the citation for these coordinates refers to the print source. The editors of the <title>The Syriac Gazetteer</title> are grateful to the editors of <title>The Gorgias Encyclopedic Dictionary of the Syriac Heritage</title> and <title>The Syriac World</title> for providing these coordinate files.</p>
-                            <p>The editors have silently normalized data from other sources in some cases. The primary instances are listed below.</p>
-                            <p>The capitalization of names from <title>The Gorgias Encyclopedic Dictionary of the Syriac Heritage</title> (<ref target="http://syriaca.org/bibl/1">http://syriaca.org/bibl/1</ref>) was normalized silently (i.e. names in ALL-CAPS were replaced by Proper-noun capitalization).</p>
-                            <p>The unchanging parts of alternate names from the editions and translations of Barsoum, <title>The Scattered Pearls: A History of Syriac Literature and Sciences</title> (<ref target="http://syriaca.org/bibl/2">http://syriaca.org/bibl/2</ref>, <ref target="http://syriaca.org/bibl/3">http://syriaca.org/bibl/3</ref>, or <ref target="http://syriaca.org/bibl/4">http://syriaca.org/bibl/4</ref>) have been supplied silently.</p>
-                            <p>Names from the English translation of Barsoum, <title>The Scattered Pearls: A History of Syriac Literature and Sciences</title> (<ref target="http://syriaca.org/bibl/4">http://syriaca.org/bibl/4</ref>) were silently transformed into sentence word order rather than the headword alphabetization used by Barsoum.  Commas were silently removed.</p>
-                        </editorialDecl>
-                        <classDecl>
-                            <taxonomy>
-                                <category xml:id="syriaca-headword">
-                                    <catDesc>The name used by Syriaca.org for document titles, citation, and disambiguation. These names have been created according to the Syriac.org guidelines for headwords: <ref target="http://syriaca.org/documentation/headwords.html">http://syriaca.org/documentation/headwords.html</ref>.</catDesc>
-                                </category>
-                            </taxonomy>
-                        </classDecl>
-                    </encodingDesc>
-                    <profileDesc>
-                        <langUsage>
-                            <p>
-                                Languages codes used in this record follow the Syriaca.org guidelines. Documentation available at: 
-                                <ref target="http://syriaca.org/documentation/langusage.xml">http://syriaca.org/documentation/langusage.xml</ref>
-                            </p>
-                        </langUsage>
-                    </profileDesc>
-                    <revisionDesc status="draft">
-                        <change who="http://syriaca.org/documentation/editors.xml#dschwartz" when="2020-07-13">CREATED: place</change>
-                    </revisionDesc>
-                </teiHeader>
-                <text>
-                    <body>
-                        <listPlace>
-                            <!--adjust place types-->
-                            <place type="settlement">
-                                <placeName 
-                                    source="{concat('#bib',$id,'-1')}" 
-                                    xml:id="{concat('name',$id,'-1')}" 
-                                    xml:lang="en-x-lhom" 
-                                    srophe:tags="#syriaca-headword">
-                                    <xsl:value-of select="Name__curated_"/>
-                                </placeName>
-                                <xsl:variable name="alt-names-joined"
-                                    select="string-join((Alternate_Names,Alternate_Names__curated_),', ')"/>
-                                <xsl:variable name="alt-names"
-                                    select="tokenize($alt-names-joined,',\s*')"/>
-                                <xsl:for-each select="$alt-names">
-                                    <xsl:variable name="index" select="index-of($alt-names,.)"/>
-                                    <placeName 
-                                        source="{concat('#bib',$id,'-1')}" 
-                                        xml:id="{concat('name',$id,'-',$index[1])}" 
-                                        xml:lang="en-x-lhom">
-                                        <xsl:value-of select="."/>
-                                    </placeName>
-                                </xsl:for-each>
-                                <xsl:if test="string-length(Identity__curated_)">
-                                    <desc type="abstract" xml:id="abstract{$id}-1" xml:lang="en" source="#bib{$id}-1">
-                                        "<xsl:value-of select="Identity__curated_"/>"
-                                    </desc>
-                                </xsl:if>
-                                <idno type="URI"><xsl:value-of select="$uri"/></idno>
-                                <bibl xml:id="bib{$id}-1">
-                                    <ptr target="https://usaybia.net/bibl/WVSJMDSV"/>
-                                    <citedRange unit="p"><xsl:value-of select="Index_Page"/> (index)</citedRange>
-                                    <xsl:for-each select="tokenize(Refs,';\s*')">
-                                        <citedRange unit="entry"><xsl:value-of select="."/></citedRange>
-                                    </xsl:for-each>
-                                </bibl>
-                            </place>
-                        </listPlace>
-                    </body>
-                </text>
-            </TEI>
+            <xsl:variable name="record-id" select="replace($uri, 'https://usaybia.net/place/', '')"/>
+
+
+            <!-- creates a variable containing the path of the file to be created for this record, in the location defined by $directory -->
+            <xsl:variable name="filename">
+                <xsl:choose>
+                    <!-- tests whether there is sufficient data to create a complete record. If not, puts it in an 'incomplete' folder inside the $directory -->
+                    <xsl:when test="empty(Name__curated_)">
+                        <xsl:value-of
+                            select="concat($directory, '/incomplete/', $record-id, '.xml')"/>
+                    </xsl:when>
+                    <!-- if record is complete and has a URI, puts it in the $directory folder -->
+                    <xsl:when test="URI != ''">
+                        <xsl:value-of select="concat($directory, $record-id, '.xml')"/>
+                    </xsl:when>
+                    <!-- if record doesn't have a URI, puts it in 'unresolved' folder inside the $directory  -->
+                    <xsl:otherwise>
+                        <xsl:value-of select="concat($directory, 'unresolved/', $record-id, '.xml')"
+                        />
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:variable>
+
+            <!-- creates the XML file, if the filename has been sucessfully created. -->
+            <xsl:if test="$filename != ''">
+                <xsl:result-document href="{$filename}" format="xml">
+                    <!-- adds the xml-model instruction with the link to the Syriaca.org validator -->
+                    <xsl:processing-instruction name="xml-model">
+                        <xsl:text>href="https://raw.githubusercontent.com/srophe/srophe-eXist-app/master/documentation/schemas/out/syriacaPlaces.compiled.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"</xsl:text>
+                    </xsl:processing-instruction>
+                    <xsl:processing-instruction name="xml-model">
+                        <xsl:text>href="https://raw.githubusercontent.com/srophe/srophe-eXist-app/master/documentation/schemas/out/syriacaPlaces.compiled.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"</xsl:text>
+                    </xsl:processing-instruction>
+                    <xsl:processing-instruction name="xml-model">
+                        <xsl:text>href="https://raw.githubusercontent.com/srophe/srophe-eXist-app/master/documentation/schemas/uniqueLangHW.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"</xsl:text>
+                    </xsl:processing-instruction>
+
+                    <TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:srophe="https://srophe.app"
+                        xmlns:syriaca="http://syriaca.org" xmlns:svg="http://www.w3.org/2000/svg"
+                        xml:lang="en">
+                        <teiHeader>
+                            <fileDesc>
+                                <titleStmt>
+                                    <title level="a" xml:lang="en">
+                                        <xsl:value-of select="Name__curated_"/>
+                                    </title>
+                                    <sponsor ref="https://www.uni-muenchen.de">
+                                        <orgName>Ludwig Maximilian University of Munich</orgName>
+                                            (<orgName xml:lang="de">Ludwig-Maximilians-Universität
+                                            München</orgName>) </sponsor>
+                                    <sponsor ref="http://www.naher-osten.uni-muenchen.de">
+                                        <orgName>Institute of Near and Middle Eastern
+                                            Studies</orgName> (<orgName xml:lang="de">Institut für
+                                            den Nahen und Mittleren Osten</orgName>) </sponsor>
+                                    <funder ref="https://www.bmbf.de/">
+                                        <orgName>German Federal Ministry of Education and
+                                            Research</orgName> (<orgName xml:lang="de"
+                                            >Bundesministerium für Bildung und Forschung</orgName>) </funder>
+                                    <principal ref="#ngibson">Nathan P. Gibson</principal>
+
+                                    <!-- EDITORS -->
+                                    <editor xml:id="ngibson" role="editor"
+                                        ref="https://usaybia.net/documentation/editors.xml#ngibson 
+                                        http://syriaca.org/documentation/editors.html#ngibson 
+                                        https://www.naher-osten.uni-muenchen.de/personen/wiss_ma/gibson/index.html
+                                        http://orcid.org/0000-0003-0786-8075
+                                        http://viaf.org/viaf/59147905242279092527"
+                                        >Nathan P. Gibson</editor>
+
+                                    <!-- CREATOR -->
+                                    <!-- designates the editor responsible for creating this person record (may be different from the file creator) -->
+                                    <editor role="creator" ref="#ngibson">Nathan P. Gibson</editor>
+
+                                    <!-- CONTRIBUTORS -->
+                                    <respStmt>
+                                        <resp>The orignal version of this record was adapted from
+                                            the index entry in A Literary History of Medicine: The
+                                            “Uyūn al-Anbā” Fī Ṭabaqāt al-Aṭibbā’ of Ibn Abī
+                                            Uṣaybi’ah, 5 vols. (Leiden: Brill, 2020) by</resp>
+                                        <name>Emilie Savage-Smith</name>
+                                        <name>Simon Swain</name>
+                                        <name>G. J. H. van Gelder</name>
+                                    </respStmt>
+                                    <respStmt>
+                                        <resp>Conversion into tabular and TEI-XML formats, data
+                                            mining, and proofing by</resp>
+                                        <name type="person" ref="#ngibson">Nathan P. Gibson</name>
+                                    </respStmt>
+                                    <respStmt>
+                                        <resp>Original data architecture of TEI place records for
+                                            Srophé by</resp>
+                                        <name type="person"
+                                            ref="http://syriaca.org/documentation/editors.xml#dmichelson"
+                                            >David A. Michelson</name>
+                                    </respStmt>
+                                    <respStmt>
+                                        <resp>Original data architecture of TEI place records for
+                                            Srophé by</resp>
+                                        <name type="person"
+                                            ref="http://syriaca.org/documentation/editors.xml#tcarlson"
+                                            >Thomas A. Carlson</name>
+                                    </respStmt>
+                                    <respStmt>
+                                        <resp>Srophé app design and development by</resp>
+                                        <name type="person"
+                                            ref="http://syriaca.org/documentation/editors.xml#wsalesky"
+                                            >Winona Salesky</name>
+                                    </respStmt>
+                                </titleStmt>
+                                <editionStmt>
+                                    <edition n="0.3"/>
+                                </editionStmt>
+                                <publicationStmt>
+                                    <authority>
+                                        <ref target="https://usaybia.net">Usaybia.net</ref>
+                                    </authority>
+                                    <idno type="URI">
+                                        <xsl:value-of select="concat($uri, '/tei')"/>
+                                    </idno>
+                                    <availability>
+                                        <licence
+                                            target="http://creativecommons.org/licenses/by/3.0/">
+                                            <p>Distributed under a Creative Commons Attribution 4.0
+                                                International (CC BY 4.0) License.</p>
+                                        </licence>
+                                    </availability>
+                                    <date>
+                                        <xsl:value-of select="current-date()"/>
+                                    </date>
+                                </publicationStmt>
+                                <sourceDesc>
+                                    <p>Born digital.</p>
+                                </sourceDesc>
+                            </fileDesc>
+                            <encodingDesc>
+                                <editorialDecl>
+                                    <p>This record has been created following the Usaybia.net
+                                        editorial guidelines. Documentation is available at: <ref
+                                            target="https://usaybia.net/documentation"
+                                            >https://usaybia.net/documentation</ref>.</p>
+                                    <p>The editors have silently normalized data from other sources
+                                        in some cases. The primary instances are listed below.</p>
+                                    <p>Place names, descriptions, and entry numbers from the index
+                                        of Emilie Savage-Smith, Simon Swain, and G. J. H. van Gelder
+                                        (eds.), A Literary History of Medicine: The “Uyūn al-Anbā”
+                                        Fī Ṭabaqāt al-Aṭibbā’ of Ibn Abī Uṣaybi’ah, 5 vols. (Leiden:
+                                        Brill, 2020) were occasionally corrected for typographic
+                                        errors. Alternate names drawn from cross-references were
+                                        sometimes standardized to match the form appearing elsewhere
+                                        in the index.</p>
+                                </editorialDecl>
+                                <classDecl>
+                                    <taxonomy>
+                                        <category xml:id="syriaca-headword">
+                                            <catDesc>The name used by Syriaca.org for document
+                                                titles, citation, and disambiguation. These names
+                                                have been created according to the Syriac.org
+                                                guidelines for headwords: <ref
+                                                  target="http://syriaca.org/documentation/headwords.html"
+                                                  >http://syriaca.org/documentation/headwords.html</ref>.</catDesc>
+                                        </category>
+                                    </taxonomy>
+                                </classDecl>
+                            </encodingDesc>
+                            <profileDesc>
+                                <langUsage>
+                                    <p> Language codes used in this record follow the Usaybia.net
+                                        guidelines. Documentation available at: <ref
+                                            target="https://usaybia.net/documentation/langusage.xml"
+                                            >https://usaybia.net/documentation/langusage.xml</ref>
+                                    </p>
+                                </langUsage>
+                            </profileDesc>
+                            <revisionDesc status="draft">
+                                <change who="http://usaybia.net/documentation/editors.xml#ngibson"
+                                    n="0.3" when="{current-date()}">CREATED: place from spreadsheet
+                                    https://docs.google.com/spreadsheets/d/1B6vJjZjUbCX-oyqmrgVmVq7GmyqvaAjfBlzcIYnwhpQ.
+                                    The canonical record is currently in the spreadsheet. Changes
+                                    should be made there. THIS FILE SHOULD NOT BE MANUALLY
+                                    EDITED!</change>
+                            </revisionDesc>
+                        </teiHeader>
+                        <text>
+                            <body>
+                                <listPlace>
+                                    <!--adjust place types-->
+                                    <place type="settlement">
+                                        <placeName source="{concat('#bib',$record-id,'-1')}"
+                                            xml:id="{concat('name',$record-id,'-1')}"
+                                            xml:lang="en-x-lhom" srophe:tags="#syriaca-headword">
+                                            <xsl:value-of select="Name__curated_"/>
+                                        </placeName>
+                                        <xsl:variable name="alt-names-joined"
+                                            select="string-join((Alternate_Names, Alternate_Names__curated_), ', ')"/>
+                                        <xsl:variable name="alt-names"
+                                            select="distinct-values(tokenize($alt-names-joined, ',\s*'))"/>
+                                        <xsl:for-each select="$alt-names">
+                                            <xsl:variable name="index"
+                                                select="index-of($alt-names, .)+1"/>
+                                            <xsl:if test=". != ''">
+                                                <placeName source="{concat('#bib',$record-id,'-1')}"
+                                                  xml:id="{concat('name',$record-id,'-',$index[1])}"
+                                                  xml:lang="en-x-lhom">
+                                                  <xsl:value-of select="."/>
+                                                </placeName>
+                                            </xsl:if>
+                                        </xsl:for-each>
+                                        <xsl:if test="string-length(Identity__curated_)">
+                                            <desc type="abstract" xml:id="abstract{$record-id}-1"
+                                                xml:lang="en" source="#bib{$record-id}-1">
+                                                  "<xsl:value-of select="Identity__curated_"/>"
+                                            </desc>
+                                        </xsl:if>
+                                        <idno type="URI">
+                                            <xsl:value-of select="$uri"/>
+                                        </idno>
+                                        <bibl xml:id="bib{$record-id}-1">
+                                            <ptr target="https://usaybia.net/bibl/WVSJMDSV"/>
+                                            <citedRange unit="p"><xsl:value-of select="Index_Page"/>
+                                                (index)</citedRange>
+                                            <xsl:for-each select="tokenize(Refs, ';\s*')">
+                                                <citedRange unit="entry">
+                                                  <xsl:value-of select="."/>
+                                                </citedRange>
+                                            </xsl:for-each>
+                                        </bibl>
+                                    </place>
+                                </listPlace>
+                            </body>
+                        </text>
+                    </TEI>
+                </xsl:result-document>
+            </xsl:if>
         </xsl:if>
     </xsl:template>
 </xsl:stylesheet>
