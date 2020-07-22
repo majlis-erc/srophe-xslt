@@ -958,8 +958,13 @@
             <revisionDesc status="draft">
 
                 <!-- FILE CREATOR -->
-                <change who="http://syriaca.org/documentation/editors.xml#ngibson" n="1.0">
-                    <xsl:attribute name="when" select="current-date()"/>CREATED: person</change>
+                <change who="http://syriaca.org/documentation/editors.xml#ngibson"
+                    n="1.0"
+                    when="2020-05-21+02:00">CREATED: person</change>
+                <change who="http://syriaca.org/documentation/editors.xml#ngibson" 
+                    n="1.1">
+                    <xsl:attribute name="when" select="current-date()"/>CREATED: person from spreadsheet https://docs.google.com/spreadsheets/d/1ujiT91ua3sA-WX86OWpuE-gDD_E-zONpI1dP70pXdWw/edit#gid=0.
+                The canonical record is currently in the spreadsheet. Changes should be made there. THIS FILE SHOULD NOT BE MANUALLY EDITED!</change>
 
                 <!-- PLANNED CHANGES -->
                 <!-- ??? Are there any change @type='planned' ? -->
