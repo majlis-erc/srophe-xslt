@@ -8,6 +8,8 @@
     <xsl:output encoding="UTF-8" indent="yes" method="xml" name="xml"/>
     <!-- Relative path to directory where output files will go. -->
     <xsl:variable name="directory" select="'tei/'"/>
+    <!-- Current version of data -->
+    <xsl:variable name="version" select="'0.4'"/>
 
     <xsl:template match="/root/row">
         <xsl:if test="URI != ''">
@@ -73,7 +75,7 @@
                                     <principal ref="#ngibson">Nathan P. Gibson</principal>
 
                                     <!-- EDITORS -->
-                                    <editor xml:id="ngibson" role="editor"
+                                    <editor xml:id="ngibson" role="general"
                                         ref="https://usaybia.net/documentation/editors.xml#ngibson 
                                         http://syriaca.org/documentation/editors.html#ngibson 
                                         https://www.naher-osten.uni-muenchen.de/personen/wiss_ma/gibson/index.html
@@ -122,7 +124,7 @@
                                     </respStmt>
                                 </titleStmt>
                                 <editionStmt>
-                                    <edition n="0.3"/>
+                                    <edition n="{$version}"/>
                                 </editionStmt>
                                 <publicationStmt>
                                     <authority>
@@ -187,7 +189,13 @@
                             </profileDesc>
                             <revisionDesc status="draft">
                                 <change who="http://usaybia.net/documentation/editors.xml#ngibson"
-                                    n="0.3" when="{current-date()}">CREATED: place from spreadsheet
+                                    n="0.4" when="2020-07-22+02:00">CREATED: place from spreadsheet
+                                    https://docs.google.com/spreadsheets/d/1B6vJjZjUbCX-oyqmrgVmVq7GmyqvaAjfBlzcIYnwhpQ.
+                                    The canonical record is currently in the spreadsheet. Changes
+                                    should be made there. THIS FILE SHOULD NOT BE MANUALLY
+                                    EDITED!</change>
+                                <change who="http://usaybia.net/documentation/editors.xml#ngibson"
+                                    n="{$version}" when="{current-date()}">CHANGED: Updated places from spreadsheet
                                     https://docs.google.com/spreadsheets/d/1B6vJjZjUbCX-oyqmrgVmVq7GmyqvaAjfBlzcIYnwhpQ.
                                     The canonical record is currently in the spreadsheet. Changes
                                     should be made there. THIS FILE SHOULD NOT BE MANUALLY
@@ -198,7 +206,12 @@
                             <body>
                                 <listPlace>
                                     <!--adjust place types-->
-                                    <place type="settlement">
+                                    <place>
+                                        <xsl:if 
+                                            test="Place_Type__curated_[string-length() and .!='#N/A']">
+                                            <xsl:attribute name="type" 
+                                                select="Place_Type__curated_"/>
+                                        </xsl:if>
                                         <placeName source="{concat('#bib',$record-id,'-1')}"
                                             xml:id="{concat('name',$record-id,'-1')}"
                                             xml:lang="en-x-lhom" srophe:tags="#syriaca-headword">
@@ -240,6 +253,11 @@
                                         </bibl>
                                     </place>
                                 </listPlace>
+                                <xsl:if test="Related_Place[.!=''] and Related_Place_URI[.!='']">
+                                    <listRelation>
+                                        <relation name="see-also" mutual="{$uri} {Related_Place_URI}"/>
+                                    </listRelation>
+                                </xsl:if>                                
                             </body>
                         </text>
                     </TEI>
