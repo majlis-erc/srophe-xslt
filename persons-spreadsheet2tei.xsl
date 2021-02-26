@@ -743,17 +743,19 @@
                     </respStmt>
                     <respStmt>
                         <resp>English and Arabic name entry, 
-                            matching with external records by</resp>
+                            matching with external records<xsl:if test="matches(name_checking_credit,'[Rr]\.?[Ss]\.?')">, checking for typographical 
+                            errors in headword name, abstract, and references</xsl:if> by</resp>
                         <name type="person" ref="#rschmahl">Robin Schmahl</name>
                     </respStmt>
                     <respStmt>
                         <resp>Relational descriptors, English and Arabic name entry, 
-                            matching with external records by</resp>
+                            matching with external records<xsl:if test="matches(name_checking_credit,'[Mm]\.?[Tt]\.?')">, checking for typographical 
+                            errors in headword name, abstract, and references</xsl:if> by</resp>
                         <name type="person" ref="#mtolay">Malinda Tolay</name>
                     </respStmt>
                     <respStmt>
-                        <resp>Relational descriptors, checking for typographical 
-                            errors in headword name, abstract, and references by</resp>
+                        <resp>Relational descriptors<xsl:if test="matches(name_checking_credit,'[Ff]\.?[Ii]\.?')">, checking for typographical 
+                            errors in headword name, abstract, and references</xsl:if> by</resp>
                         <name type="person" ref="#fioppolo">Fabio Ioppolo</name>
                     </respStmt>
                     <respStmt>
