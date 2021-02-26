@@ -681,6 +681,7 @@
                     <title level="a" xml:lang="en">
                         <xsl:copy-of select="$record-title"/>
                     </title>
+                    <title level="m" xml:lang="en">Communities of Knowledge: Interreligious Networks of Scholars in Ibn Abi Usaybiʿa’s History of the Physicians</title>
                     <sponsor ref="https://www.uni-muenchen.de">
                         <orgName>Ludwig Maximilian University of Munich</orgName>
                         (<orgName xml:lang="de">Ludwig-Maximilians-Universität München</orgName>)
@@ -696,7 +697,7 @@
                     <principal ref="#ngibson">Nathan P. Gibson</principal>
 
                     <!-- EDITORS -->
-                    <editor xml:id="ngibson" role="editor" ref="https://usaybia.net/documentation/editors.xml#ngibson 
+                    <editor xml:id="ngibson" role="general" ref="https://usaybia.net/documentation/editors.xml#ngibson 
                         http://syriaca.org/documentation/editors.html#ngibson 
                         https://www.naher-osten.uni-muenchen.de/personen/wiss_ma/gibson/index.html
                         http://orcid.org/0000-0003-0786-8075
@@ -751,7 +752,8 @@
                         <name type="person" ref="#mtolay">Malinda Tolay</name>
                     </respStmt>
                     <respStmt>
-                        <resp>Relational descriptors by</resp>
+                        <resp>Relational descriptors, checking for typographical 
+                            errors in headword name, abstract, and references by</resp>
                         <name type="person" ref="#fioppolo">Fabio Ioppolo</name>
                     </respStmt>
                     <respStmt>
@@ -768,13 +770,12 @@
                     </respStmt>
                 </titleStmt>
                 <editionStmt>
-                    <edition n="0.3"/>
+                    <edition n="0.5.0-dev"/>
                 </editionStmt>
                 <publicationStmt>
                     <authority>
                         <ref target="https://usaybia.net">Usaybia.net</ref>
                     </authority>
-                    <date>2020</date>
                     <idno type="URI">https://usaybia.net/person/<xsl:value-of select="$record-id"
                         />/tei</idno>
                     <availability>
@@ -963,7 +964,9 @@
                  when="2020-06-08+02:00">CREATED: person from spreadsheet https://docs.google.com/spreadsheets/d/1ujiT91ua3sA-WX86OWpuE-gDD_E-zONpI1dP70pXdWw/edit#gid=0.
                 The canonical record is currently in the spreadsheet. Changes should be made there. THIS FILE SHOULD NOT BE MANUALLY EDITED!</change>
                 <change who="http://syriaca.org/documentation/editors.xml#ngibson" n="0.3">
-                    <xsl:attribute name="when" select="current-date()"/>CHANGED: Updated person from spreadsheet https://docs.google.com/spreadsheets/d/1ujiT91ua3sA-WX86OWpuE-gDD_E-zONpI1dP70pXdWw/edit#gid=0.</change>
+                    <xsl:attribute name="when" select="'2020-06-25+02:00'"/>CHANGED: Updated person from spreadsheet https://docs.google.com/spreadsheets/d/1ujiT91ua3sA-WX86OWpuE-gDD_E-zONpI1dP70pXdWw/edit#gid=0.</change>
+                <!--<change who="http://syriaca.org/documentation/editors.xml#ngibson" n="0.3">
+                    <xsl:attribute name="when" select="current-date()"/>CHANGED: Updated person from spreadsheet https://docs.google.com/spreadsheets/d/1ujiT91ua3sA-WX86OWpuE-gDD_E-zONpI1dP70pXdWw/edit#gid=0.</change>-->
 
                 <!-- PLANNED CHANGES -->
                 <!-- ??? Are there any change @type='planned' ? -->
@@ -1196,8 +1199,10 @@
                     <xsl:if test="$is-matching-source-column and $has-cited-ranges">
                         <!-- creates the path to the bibl TEI using the URI number from the cell being processed.
                         This can be replaced with a development server address if needed. -->
+                        <!--<xsl:variable name="bibl-url"
+                            select="concat('https://usaybia.net/bibl/',.,'/tei')"/>-->
                         <xsl:variable name="bibl-url"
-                            select="concat('https://usaybia.net/bibl/',.,'/tei')"/>
+                            select="concat('../usaybia-data/data/bibl/tei/',.,'.xml')"/>
 
                         <!-- BIBL ELEMENT -->
                         <bibl>
