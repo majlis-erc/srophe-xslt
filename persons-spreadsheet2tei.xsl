@@ -701,9 +701,11 @@
                         http://syriaca.org/documentation/editors.html#ngibson 
                         https://www.naher-osten.uni-muenchen.de/personen/wiss_ma/gibson/index.html
                         http://orcid.org/0000-0003-0786-8075
-                        http://viaf.org/viaf/59147905242279092527">Nathan P. Gibson</editor>
+                        https://viaf.org/viaf/59147905242279092527">Nathan P. Gibson</editor>
                     <editor xml:id="vbirkhahn" role="contributor" ref="https://usaybia.net/documentation/editors.xml#vbirkhahn 
                         https://www.naher-osten.uni-muenchen.de/personen/fachschaft/vanessa_birkhahn/index.html">Vanessa Birkhahn</editor>
+                    <editor xml:id="hfriedel" role="contributor" ref="https://usaybia.net/documentation/editors.xml#hfriedel
+                        https://www.naher-osten.uni-muenchen.de/personen/hilfskraefte/hanna_friedel/index.html">Hanna Friedel</editor>
                     <editor xml:id="fioppolo" role="contributor" ref="https://usaybia.net/documentation/editors.xml#fioppolo
                         https://www.naher-osten.uni-muenchen.de/personen/hilfskraefte/ioppolo/index.html">Fabio Ioppolo</editor>
                     <editor xml:id="nloehr" role="contributor" ref="https://usaybia.net/documentation/editors.xml#nloehr
@@ -712,16 +714,19 @@
                         https://www.naher-osten.uni-muenchen.de/personen/hilfskraefte/schmahl/index.html">Robin Schmahl</editor>
                     <editor xml:id="mtolay" role="contributor" ref="https://usaybia.net/documentation/editors.xml#mtolay
                         https://www.naher-osten.uni-muenchen.de/personen/hilfskraefte/tolay/index.html">Malinda Tolay</editor>
+                    <editor xml:id="fzeska" role="contributor" ref="https://usaybia.net/documentation/editors.xml#fzeska">Flavio Zeska</editor>
                     
 
                     <!-- CREATOR -->
                     <!-- designates the editor responsible for creating this person record (may be different from the file creator) -->
                     <editor role="creator" ref="#ngibson">Nathan P. Gibson</editor>
                     <editor role="creator" ref="#vbirkhahn">Vanessa Birkhahn</editor>
+                    <editor role="creator" ref="#hfriedel">Hanna Friedel</editor>
                     <editor role="creator" ref="#fioppolo">Fabio Ioppolo</editor>
                     <editor role="creator" ref="#nloehr">Nadine Löhr</editor>
                     <editor role="creator" ref="#rschmahl">Robin Schmahl</editor>
                     <editor role="creator" ref="#mtolay">Malinda Tolay</editor>
+                    <editor role="creator" ref="#fzeska">Flavio Zeska</editor>
 
                     <!-- CONTRIBUTORS -->
                     <respStmt>
@@ -772,7 +777,7 @@
                     </respStmt>
                 </titleStmt>
                 <editionStmt>
-                    <edition n="0.5.0-dev"/>
+                    <edition n="0.6.0-dev"/>
                 </editionStmt>
                 <publicationStmt>
                     <authority>
