@@ -966,15 +966,17 @@
             <revisionDesc status="draft">
 
                 <!-- FILE CREATOR -->
-                <change who="http://usaybia.net/documentation/editors.xml#ngibson"
+                <xsl:if test="index-of(tokenize(changelog,','),'1')"><change who="http://usaybia.net/documentation/editors.xml#ngibson"
                  n="0.2"
-                 when="2020-06-08+02:00">CREATED: person from spreadsheet https://docs.google.com/spreadsheets/d/1ujiT91ua3sA-WX86OWpuE-gDD_E-zONpI1dP70pXdWw/edit#gid=0.
-                The canonical record is currently in the spreadsheet. Changes should be made there. THIS FILE SHOULD NOT BE MANUALLY EDITED!</change>
-                <change who="http://syriaca.org/documentation/editors.xml#ngibson" n="0.3">
-                    <xsl:attribute name="when" select="'2020-06-25+02:00'"/>CHANGED: Updated person from spreadsheet https://docs.google.com/spreadsheets/d/1ujiT91ua3sA-WX86OWpuE-gDD_E-zONpI1dP70pXdWw/edit#gid=0.</change>
-                <!--<change who="http://syriaca.org/documentation/editors.xml#ngibson" n="0.3">
-                    <xsl:attribute name="when" select="current-date()"/>CHANGED: Updated person from spreadsheet https://docs.google.com/spreadsheets/d/1ujiT91ua3sA-WX86OWpuE-gDD_E-zONpI1dP70pXdWw/edit#gid=0.</change>-->
-
+                 when="2020-06-08+02:00" xml:id="change-1">CREATED: person from spreadsheet https://docs.google.com/spreadsheets/d/1ujiT91ua3sA-WX86OWpuE-gDD_E-zONpI1dP70pXdWw/edit#gid=0.
+                The canonical record is currently in the spreadsheet. Changes should be made there. THIS FILE SHOULD NOT BE MANUALLY EDITED!</change></xsl:if>
+                <xsl:if test="index-of(tokenize(changelog,','),'2')"><change who="http://usaybia.net/documentation/editors.xml#ngibson" n="0.3" xml:id="change-2">
+                    <xsl:attribute name="when" select="'2020-06-25+02:00'"/>CHANGED: Updated person from spreadsheet https://docs.google.com/spreadsheets/d/1ujiT91ua3sA-WX86OWpuE-gDD_E-zONpI1dP70pXdWw/edit#gid=0.</change></xsl:if>
+                <xsl:if test="index-of(tokenize(changelog,','),'3')"><change who="http://usaybia.net/documentation/editors.xml#ngibson" n="0.6.0-dev" xml:id="change-3">
+                    <xsl:attribute name="when" select="'2021-03-08+02:00'"/>CHANGED: Updated person from spreadsheet https://docs.google.com/spreadsheets/d/1ujiT91ua3sA-WX86OWpuE-gDD_E-zONpI1dP70pXdWw/edit#gid=0. : Corrected names, abstracts, occupations and references.</change></xsl:if>
+                <xsl:if test="index-of(tokenize(changelog,','),'4')"><change who="http://usaybia.net/documentation/editors.xml#ngibson" n="0.6.0-dev" xml:id="change-4">
+                    <xsl:attribute name="when" select="'2021-03-08+02:00'"/>CREATED: person from spreadsheet https://docs.google.com/spreadsheets/d/1ujiT91ua3sA-WX86OWpuE-gDD_E-zONpI1dP70pXdWw/edit#gid=0. The canonical record is currently in the spreadsheet. Changes should be made there. THIS FILE SHOULD NOT BE MANUALLY EDITED!</change></xsl:if>
+                
                 <!-- PLANNED CHANGES -->
                 <!-- ??? Are there any change @type='planned' ? -->
             </revisionDesc>
