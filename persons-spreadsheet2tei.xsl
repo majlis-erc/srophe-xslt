@@ -1089,10 +1089,21 @@
                                         have to be handled differently. -->
                                     <!-- !!! If you have added element types in $column-mapping that require special handling (e.g., as an attribute value or inside a <desc>), 
                                         you should process them here. -->
+                                    
+                                    
+                                    <xsl:if test="name()='state' and @type='occupation'">
+                                        <xsl:attribute name="role" select="$column-contents"/>
+                                    </xsl:if>
                                     <xsl:choose>
                                         <!-- puts column contents inside a <label> -->
-                                        <xsl:when test="name()='state'">
+                                        <xsl:when test="name()='state' and @type!='occupation'">
                                             <xsl:element name="label">
+                                                <xsl:value-of select="$column-contents"/>
+                                            </xsl:element>
+                                        </xsl:when>
+                                        <!-- puts column contents inside a <desc> -->
+                                        <xsl:when test="name()='state' and @type='occupation'">
+                                            <xsl:element name="desc">
                                                 <xsl:value-of select="$column-contents"/>
                                             </xsl:element>
                                         </xsl:when>
