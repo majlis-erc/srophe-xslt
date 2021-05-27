@@ -290,6 +290,9 @@
     <!-- !!! Change this to where you want the output files to be placed relative to the XML file being converted. 
         This should end with a trailing slash (/).-->
     <xsl:variable name="directory">../tei/</xsl:variable>
+    
+    <!-- !!! If true will put records lacking a URI into an "unresolved" folder and assign them a random ID. -->
+    <xsl:variable name="process-unresolved" select="false()"/>
 
     <!-- CUSTOM FUNCTIONS -->
     <!-- used in auto column-mapping to determine the element name and attributes that should be created for that column. 
@@ -541,7 +544,9 @@
                     </xsl:when>
                     <!-- if record doesn't have a URI, puts it in 'unresolved' folder inside the $directory  -->
                     <xsl:otherwise>
-                        <xsl:value-of select="concat($directory,'unresolved/',$record-id,'.xml')"/>
+                        <xsl:if test="$process-unresolved">
+                            <xsl:value-of select="concat($directory,'unresolved/',$record-id,'.xml')"/>
+                        </xsl:if>                        
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:variable>
