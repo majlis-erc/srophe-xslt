@@ -129,6 +129,13 @@
                         <xsl:when test="matches(name(),'^[a-zA-Z]*_occupation')">
                             <xsl:attribute name="type" select="'occupation'"/>
                         </xsl:when>
+                        <xsl:when test="matches(name(),'^[a-zA-Z]*_religious-affiliation-')">
+                            <xsl:attribute name="type" select="'religious-affiliation'"/>
+                            <xsl:attribute name="resp" select="'#ngibson'"/>
+                        </xsl:when>  
+                        <xsl:when test="matches(name(),'^[a-zA-Z]*_religious-affiliation')">
+                            <xsl:attribute name="type" select="'religious-affiliation'"/>
+                        </xsl:when>
                         <xsl:when test="matches(name(),'^[a-zA-Z]*_abstract')">
                             <xsl:attribute name="type" select="'abstract'"/>
                         </xsl:when>
@@ -140,6 +147,29 @@
                         </xsl:when>
                         <xsl:when test="starts-with(name(),'idno_')">
                             <xsl:attribute name="type" select="substring-after(name(),'idno_')"/>
+                        </xsl:when>
+                    </xsl:choose>
+                    <!-- adds extra attributes for specific religious affiliation signals -->
+                    <xsl:choose>
+                        <xsl:when test="matches(name(),'^[a-zA-Z]*_religious-affiliation-nisba')">
+                            <xsl:attribute name="evidence" select="'nisba'"/>
+                            <xsl:attribute name="cert" select="'high'"/>
+                        </xsl:when>                        
+                        <xsl:when test="matches(name(),'^[a-zA-Z]*_religious-affiliation-occupation')">
+                            <xsl:attribute name="evidence" select="'occupation'"/>
+                            <xsl:attribute name="cert" select="'high'"/>
+                        </xsl:when>
+                        <xsl:when test="matches(name(),'^[a-zA-Z]*_religious-affiliation-given-name')">
+                            <xsl:attribute name="evidence" select="'given-name'"/>
+                            <xsl:attribute name="cert" select="'low'"/>
+                        </xsl:when>
+                        <xsl:when test="matches(name(),'^[a-zA-Z]*_religious-affiliation-ancestor-name')">
+                            <xsl:attribute name="evidence" select="'ancestor-name'"/>
+                            <xsl:attribute name="cert" select="'low'"/>
+                        </xsl:when>
+                        <xsl:when test="matches(name(),'^[a-zA-Z]*_religious-affiliation-descendant-name')">
+                            <xsl:attribute name="evidence" select="'descendant-name'"/>
+                            <xsl:attribute name="cert" select="'low'"/>
                         </xsl:when>
                     </xsl:choose>
                     <!-- adds relation name, using as a value the text in the column name immediately after the element name ("relation_"). 
@@ -807,9 +837,10 @@
                                 </p>-->
                         </licence>
                     </availability>
-                    <date>
+                    <date>2021-01-28+02:00</date>
+                    <!--<date>
                         <xsl:value-of select="current-date()"/>
-                    </date>
+                    </date>-->
                 </publicationStmt>
 
                 <!-- SERIES STATEMENTS -->
@@ -976,6 +1007,8 @@
                     <xsl:attribute name="when" select="'2021-03-08+02:00'"/>CHANGED: Updated person from spreadsheet https://docs.google.com/spreadsheets/d/1ujiT91ua3sA-WX86OWpuE-gDD_E-zONpI1dP70pXdWw/edit#gid=0. : Corrected names, abstracts, occupations and references.</change></xsl:if>
                 <xsl:if test="index-of(tokenize(changelog,','),'4')"><change who="http://usaybia.net/documentation/editors.xml#ngibson" n="0.6.0-dev" xml:id="change-4">
                     <xsl:attribute name="when" select="'2021-03-08+02:00'"/>CREATED: person from spreadsheet https://docs.google.com/spreadsheets/d/1ujiT91ua3sA-WX86OWpuE-gDD_E-zONpI1dP70pXdWw/edit#gid=0. The canonical record is currently in the spreadsheet. Changes should be made there. THIS FILE SHOULD NOT BE MANUALLY EDITED!</change></xsl:if>
+                <xsl:if test="index-of(tokenize(changelog,','),'5')"><change who="http://usaybia.net/documentation/editors.xml#ngibson" n="0.6.0-dev" xml:id="change-5">
+                    <xsl:attribute name="when" select="'2021-03-10+02:00'"/>CHANGED: Added religious affiliations and religious affiliation signals from spreadsheet https://docs.google.com/spreadsheets/d/1ujiT91ua3sA-WX86OWpuE-gDD_E-zONpI1dP70pXdWw/edit#gid=0.</change></xsl:if>
                 
                 <!-- PLANNED CHANGES -->
                 <!-- ??? Are there any change @type='planned' ? -->
