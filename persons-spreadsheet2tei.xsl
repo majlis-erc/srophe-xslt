@@ -277,6 +277,9 @@
             For example ... -->
         <!-- ??? This might need a little debugging. Mainly, I'm not entirely sure that whether using column names instead of numbers 
             works properly. If that's a problem, you could try it with column numbers instead of names. -->
+        <persName xml:lang="ar" srophe-tags="#syriaca-headword #unverified-attestation"
+            change="#change-6"
+            column="Created_Arabic_Names"/>
         <persName xml:lang="en" sourceUriColumn="Brooks_URI" srophe-tags="#syriaca-headword"
             column="Name_in_Index"/>
         <note xml:lang="en" type="abstract" column="Additional_Info"/>
