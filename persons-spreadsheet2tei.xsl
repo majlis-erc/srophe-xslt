@@ -535,7 +535,7 @@
             <xsl:variable name="filename">
                 <xsl:choose>
                     <!-- tests whether there is sufficient data to create a complete record. If not, puts it in an 'incomplete' folder inside the $directory -->
-                    <xsl:when test="empty($converted-columns/*[@srophe-tags='#syriaca-headword'])">
+                    <xsl:when test="empty($converted-columns/*[@srophe-tags='#syriaca-headword']) and New_URI != ''">
                         <xsl:value-of select="concat($directory,'/incomplete/',$record-id,'.xml')"/>
                     </xsl:when>
                     <!-- if record is complete and has a URI, puts it in the $directory folder -->
