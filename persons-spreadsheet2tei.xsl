@@ -798,6 +798,12 @@
                             errors in headword name, abstract, and references</xsl:if> by</resp>
                         <name type="person" ref="#fioppolo">Fabio Ioppolo</name>
                     </respStmt>
+                    <xsl:if test="matches(arabic_checking_credit,'[Hh]\.?[Ff]\.?')">
+                    <respStmt>
+                        <resp>Adding names in Arabic script by</resp>
+                        <name type="person" ref="#hfriedel">Hanna Friedel</name>
+                    </respStmt>
+                    </xsl:if>
                     <respStmt>
                         <resp>Bibliography editing<xsl:if test="matches(name_checking_credit,'[Nn]\.?[Ll]\.?')"> and checking for typographical 
                             errors in headword name, abstract, and references</xsl:if> by</resp>
@@ -1015,6 +1021,8 @@
                     <xsl:attribute name="when" select="'2021-03-08+02:00'"/>CREATED: person from spreadsheet https://docs.google.com/spreadsheets/d/1ujiT91ua3sA-WX86OWpuE-gDD_E-zONpI1dP70pXdWw/edit#gid=0. The canonical record is currently in the spreadsheet. Changes should be made there. THIS FILE SHOULD NOT BE MANUALLY EDITED!</change></xsl:if>
                 <xsl:if test="index-of(tokenize(changelog,','),'5')"><change who="http://usaybia.net/documentation/editors.xml#ngibson" n="0.6.0-dev" xml:id="change-5">
                     <xsl:attribute name="when" select="'2021-03-10+02:00'"/>CHANGED: Added religious affiliations and religious affiliation signals from spreadsheet https://docs.google.com/spreadsheets/d/1ujiT91ua3sA-WX86OWpuE-gDD_E-zONpI1dP70pXdWw/edit#gid=0.</change></xsl:if>
+                <xsl:if test="index-of(tokenize(changelog,','),'6')"><change who="http://usaybia.net/documentation/editors.xml#ngibson https://usaybia.net/documentation/editors.xml#hfriedel" n="0.6.0-dev" xml:id="change-6">
+                    <xsl:attribute name="when" select="'2021-05-27+02:00'"/>CHANGED: Added Arabic names from spreadsheet https://docs.google.com/spreadsheets/d/1ujiT91ua3sA-WX86OWpuE-gDD_E-zONpI1dP70pXdWw/edit#gid=0.</change></xsl:if>
                 
                 <!-- PLANNED CHANGES -->
                 <!-- ??? Are there any change @type='planned' ? -->
