@@ -794,7 +794,8 @@
                         <name type="person" ref="#fioppolo">Fabio Ioppolo</name>
                     </respStmt>
                     <respStmt>
-                        <resp>Bibliography editing by</resp>
+                        <resp>Bibliography editing<xsl:if test="matches(name_checking_credit,'[Nn]\.?[Ll]\.?')"> and checking for typographical 
+                            errors in headword name, abstract, and references</xsl:if> by</resp>
                         <name type="person" ref="#nloehr">Nadine Löhr</name>
                     </respStmt>
                     <respStmt>
