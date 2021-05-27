@@ -277,9 +277,6 @@
             For example ... -->
         <!-- ??? This might need a little debugging. Mainly, I'm not entirely sure that whether using column names instead of numbers 
             works properly. If that's a problem, you could try it with column numbers instead of names. -->
-        <persName xml:lang="ar" srophe-tags="#syriaca-headword #unverified-attestation"
-            change="#change-6"
-            column="Created_Arabic_Names"/>
         <persName xml:lang="en" sourceUriColumn="Brooks_URI" srophe-tags="#syriaca-headword"
             column="Name_in_Index"/>
         <note xml:lang="en" type="abstract" column="Additional_Info"/>
@@ -1223,6 +1220,17 @@
                                             <xsl:choose>
                                                 <xsl:when test="$column-contents='M'">male</xsl:when>
                                                 <xsl:when test="$column-contents='F'">female</xsl:when>
+                                            </xsl:choose>
+                                        </xsl:when>
+                                        <xsl:when test="name()='persName' and contains(@srophe-tags,'#syriaca-headword')">
+                                            <xsl:variable name="lang" select="@xml:lang"/>
+                                            <xsl:choose>
+                                                <xsl:when test="count($columns-to-convert[@xml:lang=$lang and .!='']) > 1">
+                                                    <!-- Then need to add syriaca-headword only to first one that has a source -->
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <xsl:copy-of select="$column-contents"/>
+                                                </xsl:otherwise>
                                             </xsl:choose>
                                         </xsl:when>
                                         <!-- if the column does not meet the above tests for special processing, the column contents are put directly into the element -->
