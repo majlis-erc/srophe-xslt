@@ -1223,12 +1223,17 @@
                                             </xsl:choose>
                                         </xsl:when>
                                         <xsl:when test="name()='persName' and contains(@srophe-tags,'#syriaca-headword')">
-                                            <xsl:variable name="lang" select="@xml:lang"/>
+                                            <xsl:variable name="lang" select="string(@xml:lang)"/>
+                                            <xsl:variable 
+                                                name="same-language-non-empty-headword-columns"
+                                                select="$columns-to-convert[matches(name(),concat('headword.*\.',$lang)) and .!='']"/>
+                                            <xsl:variable name="index" select="index-of($same-language-non-empty-headword-columns/name(),$column-name)"/>
                                             <xsl:choose>
-                                                <xsl:when test="count($columns-to-convert[@xml:lang=$lang and .!='']) > 1">
-                                                    <!-- Then need to add syriaca-headword only to first one that has a source -->
+                                                <xsl:when test="$index = 1">
+                                                        <xsl:copy-of select="$column-contents"/>
                                                 </xsl:when>
-                                                <xsl:otherwise>
+                                                <xsl:otherwise>                                                    
+                                                    <xsl:attribute name="test" select="'test'"/>
                                                     <xsl:copy-of select="$column-contents"/>
                                                 </xsl:otherwise>
                                             </xsl:choose>
