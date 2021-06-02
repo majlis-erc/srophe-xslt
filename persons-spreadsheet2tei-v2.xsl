@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:srophe="https://srophe.app" 
     exclude-result-prefixes="xs"
     version="2.0">
     
@@ -8,10 +8,12 @@
     <!-- specifies how the output file will look -->
     <xsl:output encoding="UTF-8" indent="yes" method="xml" name="xml"/>
     
-    <!-- ??? Not sure what this variable does. They're from Winona's saints XSL. -->
-    <xsl:variable name="n">
-        <xsl:text/>
-    </xsl:variable>
+    <!-- COLUMN NAME FORMATTING --> 
+    <!-- string appended to columns containing element names -->
+    <xsl:variable name="element-suffix" select="'_element'"/>
+    <!-- string appended to columns containing attribute values, followed by attribute name. 
+    Colons (for namespaces) should be indicated by a double hyphen -->
+    <xsl:variable name="attribute-suffix" select="'_att_'"/>
     
     <!-- DIRECTORY -->
     <!-- specifies where the output TEI files should go -->
@@ -21,6 +23,30 @@
     
     <!-- !!! If true will put records lacking a URI into an "unresolved" folder and assign them a random ID. -->
     <xsl:variable name="process-unresolved" select="false()"/>
+    
+    <xsl:function name="srophe:is-content-column" as="xs:boolean">
+        <xsl:param name="column" as="node()"/>
+        <xsl:value-of select="not($column/name()='New_URI' or matches($column/name(),$element-suffix) or matches($column/name(),$attribute-suffix))"/>
+    </xsl:function>
+    
+    <xsl:function name="srophe:create-element">
+        <xsl:param name="content-column" as="node()*"/>
+        <xsl:for-each select="$content-column[normalize-space(.)!='']">
+            <xsl:variable name="column-name" select="name()"/>
+            <xsl:variable name="element" select="following-sibling::*[name()=concat($column-name,'_element')][1]"/>
+            <xsl:variable name="attributes" select="following-sibling::*[matches(name(),concat($column-name,'_att_'))]"/>
+            <xsl:variable name="children" select="following-sibling::*[srophe:is-content-column(.) and matches(name(),concat('^child_',$column-name))]"/>
+            <xsl:element name="{$element}">
+                <xsl:for-each select="$attributes">
+                    <xsl:attribute name="{replace(replace(name(),'.*_att_',''),'--',':')}" select="."/>
+                </xsl:for-each>
+                <xsl:copy-of select="if ($children) then srophe:create-element($children) else ()"/>
+                <!-- Underscore (_) is used to trigger creating the element if it has no content.
+                    Does this need to be a recursive function? -->
+                <xsl:copy-of select="node()/replace(.,'^_$','')"/>
+            </xsl:element>
+        </xsl:for-each>        
+    </xsl:function>
     
     <!-- MAIN TEMPLATE -->
     <!-- processes each row of the spreadsheet -->
@@ -76,26 +102,10 @@
                     <xsl:text>href="http://syriaca.org/documentation/syriaca-tei-main.rnc" type="application/relax-ng-compact-syntax"</xsl:text>
                 </xsl:processing-instruction>
                    
-                    <xsl:variable name="element-cells" select="./*[matches(name(),'_element')]"/>
-                    <xsl:variable name="attribute-cells" select="./*[matches(name(),'_att_')]"/>
-                    <xsl:variable name="content-cells" select="./*[name()!='New_URI' and empty(index-of(($element-cells,$attribute-cells),.))]"/>    
+                    <xsl:variable name="content-cells" select="./*[srophe:is-content-column(.) and not(matches(name(),'^child'))]"/>    
                     
-                    <xsl:for-each select="$content-cells[normalize-space(.)!='']">
-                        <xsl:variable name="column-name" select="name()"/>
-                        <xsl:variable name="element" select="following-sibling::*[name()=concat($column-name,'_Element')][1]"/>
-                        <xsl:variable name="attributes" select="following-sibling::*[matches(name(),concat($column-name,'_att_'))]"/>
-                        <xsl:element name="{$element}">
-                            <xsl:for-each select="$attributes">
-                                <xsl:attribute name="{replace(replace(name(),'.*_att_',''),'--',':')}" select="."/>
-                                <!--<xsl:analyze-string select="." regex="(.*?)=&quot;(.*?)&quot;\s*">
-                                    <xsl:matching-substring>
-                                        <xsl:attribute name="{regex-group(1)}" select="regex-group(2)"/>
-                                    </xsl:matching-substring>
-                                </xsl:analyze-string>-->
-                            </xsl:for-each>
-                            <xsl:copy-of select="node()"/>
-                        </xsl:element>
-                    </xsl:for-each>
+                    <xsl:copy-of select="srophe:create-element($content-cells)"/>
+                    
                 </xsl:result-document>
             </xsl:if>
         </xsl:for-each>
