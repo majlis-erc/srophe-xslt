@@ -34,7 +34,7 @@
         <xsl:for-each select="$content-column[normalize-space(.)!='']">
             <xsl:variable name="column-name" select="replace(name(),concat($element-suffix,'.*$'),'')"/>
             <xsl:variable name="element" select="replace(name(),concat($column-name,$element-suffix),'')"/>
-            <xsl:variable name="attributes" select="following-sibling::*[matches(name(),concat('^',$column-name,$attribute-suffix))]"/>
+            <xsl:variable name="attributes" select="following-sibling::*[matches(name(),concat('^',$column-name,$attribute-suffix)) and normalize-space(.)!='']"/>
             <xsl:variable name="children" select="following-sibling::*[matches(name(),$element-suffix) and matches(name(),concat('^child_',$column-name))]"/>
             <xsl:element name="{$element}">
                 <xsl:for-each select="$attributes">
