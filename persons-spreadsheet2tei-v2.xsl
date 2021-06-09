@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:srophe="https://srophe.app" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    xmlns:tei="http://www.tei-c.org/ns/1.0"
+    xmlns:srophe="https://srophe.app" 
+    xmlns:functx="http://www.functx.com"
     exclude-result-prefixes="xs"
     version="2.0">
     
@@ -46,6 +49,126 @@
                 <xsl:copy-of select="node()/replace(.,'^_$','')"/>
             </xsl:element>
         </xsl:for-each>        
+    </xsl:function>
+    
+    <xsl:function name="functx:is-node-in-sequence-deep-equal" as="xs:boolean"
+        xmlns:functx="http://www.functx.com">
+        <xsl:param name="node" as="node()?"/>
+        <xsl:param name="seq" as="node()*"/>
+        
+        <xsl:sequence select="
+            some $nodeInSeq in $seq satisfies deep-equal($nodeInSeq,$node)
+            "/>
+        
+    </xsl:function>
+    
+    <xsl:function name="functx:distinct-deep" as="node()*"
+        xmlns:functx="http://www.functx.com">
+        <xsl:param name="nodes" as="node()*"/>
+        
+        <xsl:sequence select="
+            for $seq in (1 to count($nodes))
+            return $nodes[$seq][not(functx:is-node-in-sequence-deep-equal(
+            .,$nodes[position() &lt; $seq]))]
+            "/>
+        
+    </xsl:function>
+    
+    <xsl:function name="functx:substring-after-if-contains" as="xs:string?"
+        xmlns:functx="http://www.functx.com">
+        <xsl:param name="arg" as="xs:string?"/>
+        <xsl:param name="delim" as="xs:string"/>
+        
+        <xsl:sequence select="
+            if (contains($arg,$delim))
+            then substring-after($arg,$delim)
+            else $arg
+            "/>
+        
+    </xsl:function>
+    
+    <xsl:function name="functx:name-test" as="xs:boolean"
+        xmlns:functx="http://www.functx.com">
+        <xsl:param name="testname" as="xs:string?"/>
+        <xsl:param name="names" as="xs:string*"/>
+        
+        <xsl:sequence select="
+            $testname = $names
+            or
+            $names = '*'
+            or
+            functx:substring-after-if-contains($testname,':') =
+            (for $name in $names
+            return substring-after($name,'*:'))
+            or
+            substring-before($testname,':') =
+            (for $name in $names[contains(.,':*')]
+            return substring-before($name,':*'))
+            "/>
+        
+    </xsl:function>
+    
+    <xsl:function name="functx:remove-attributes" as="element()"
+        xmlns:functx="http://www.functx.com">
+        <xsl:param name="elements" as="element()*"/>
+        <xsl:param name="names" as="xs:string*"/>
+        
+        <xsl:for-each select="$elements">
+            <xsl:element name="{node-name(.)}">
+                <xsl:sequence
+                    select="(@*[not(functx:name-test(name(),$names))],
+                    node())"/>
+            </xsl:element>
+        </xsl:for-each>
+        
+    </xsl:function>
+    
+    <xsl:function name="srophe:remove-attributes" as="node()*">
+        <xsl:param name="nodes" as="node()*"/>
+        <xsl:param name="names" as="xs:string*"/>
+        <xsl:for-each select="$nodes">
+            <xsl:copy-of select="functx:remove-attributes(.,$names)"/>
+        </xsl:for-each>        
+    </xsl:function>
+    
+    <xsl:function name="srophe:attributes-from-matching-nodes-all-or-1st">
+        <xsl:param name="matching-nodes" as="node()*"/>
+        <xsl:param name="attribute-names" as="xs:string+"/>
+        <xsl:param name="use-1st-value-only-mode" as="xs:boolean"/>
+        <xsl:for-each select="$attribute-names">
+            <xsl:variable name="attribute-name" select="."/>
+            <xsl:variable name="matching-node-attributes" select="$matching-nodes/attribute::*[name()=$attribute-name]"/>            
+            <xsl:if test="$matching-node-attributes != ''">
+                <xsl:choose>
+                    <xsl:when test="$use-1st-value-only-mode">
+                        <xsl:attribute name="{$attribute-name}" select="$matching-nodes[1]/attribute::*[name()=$attribute-name]"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:attribute name="{$attribute-name}" select="distinct-values($matching-node-attributes)"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:if>
+        </xsl:for-each>
+    </xsl:function>
+    
+    <!-- Consolidates matching elements from different sources -->
+    <xsl:function name="srophe:consolidate-matching-nodes" as="node()*">
+        <xsl:param name="input-nodes" as="node()*"/>
+        <xsl:param name="attributes-to-combine" as="xs:string*"/>
+        <xsl:param name="attributes-to-ignore" as="xs:string*"/>
+        <xsl:for-each select="functx:distinct-deep(srophe:remove-attributes($input-nodes,($attributes-to-combine,$attributes-to-ignore)))">
+            <xsl:variable name="this-node" select="."/>
+            <xsl:variable name="matching-nodes" 
+                select="$input-nodes[deep-equal($this-node,functx:remove-attributes(.,($attributes-to-combine,$attributes-to-ignore)))]"/>
+            <xsl:element name="{$this-node/name()}">
+                <xsl:copy-of select="srophe:attributes-from-matching-nodes-all-or-1st($matching-nodes,$attributes-to-ignore,true())"/>
+                <xsl:copy-of select="srophe:attributes-from-matching-nodes-all-or-1st($matching-nodes,$attributes-to-combine,false())"/>
+                <xsl:for-each select="$this-node/@*">
+                    <xsl:attribute name="{name()}" select="."/>
+                </xsl:for-each>
+                <xsl:copy-of select="$this-node/node()"/>
+            </xsl:element>
+        </xsl:for-each>
     </xsl:function>
     
     <!-- MAIN TEMPLATE -->
@@ -104,7 +227,7 @@
                    
                     <xsl:variable name="content-cells" select="./*[matches(name(),$element-suffix) and not(matches(name(),'^child'))]"/>    
                     
-                    <xsl:copy-of select="srophe:create-element($content-cells)"/>
+                    <xsl:copy-of select="srophe:consolidate-matching-nodes(srophe:create-element($content-cells),('srophe-tags','source','resp'),'xml:id')"/>
                     
                 </xsl:result-document>
             </xsl:if>
