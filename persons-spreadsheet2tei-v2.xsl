@@ -149,6 +149,8 @@
                 </xsl:choose>
             </xsl:if>
         </xsl:for-each>
+        
+        
     </xsl:function>
     
     <!-- Consolidates matching elements from different sources -->
